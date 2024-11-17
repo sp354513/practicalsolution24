@@ -1,0 +1,123 @@
+Q-1) Write a program for the Implementation of Dijkstra’s algorithm to find shortest path to
+other vertices
+
+#include <stdio.h>
+#include <limits.h>
+#define V 9
+int minDistance(int dist[], int sptSet[]) {
+ int min = INT_MAX, min_index;
+ for (int v = 0; v < V; v++)
+ if (sptSet[v] == 0 && dist[v] <= min)
+ min = dist[v], min_index = v;
+ return min_index;
+}
+void printSolution(int dist[]) {
+ printf("Vertex \t Distance from Source\n");
+ for (int i = 0; i < V; i++)
+ printf("%d \t %d\n", i, dist[i]);
+}
+void dijkstra(int graph[V][V], int src) {
+ int dist[V]; 
+ int sptSet[V]; 
+from src to i is finalized
+ 
+ for (int i = 0; i < V; i++)
+ dist[i] = INT_MAX, sptSet[i] = 0;
+ 
+ dist[src] = 0;
+ 
+ for (int count = 0; count < V - 1; count++) {
+ int u = minDistance(dist, sptSet);
+ 
+ sptSet[u] = 1;
+ 
+ for (int v = 0; v < V; v++)
+from src to v through u is smaller than current value of dist[v]
+ if (!sptSet[v] && graph[u][v] && dist[u] != INT_MAX && dist[u] + graph[u][v] < dist[v])
+ dist[v] = dist[u] + graph[u][v];
+ }
+ 
+ printSolution(dist);
+}
+int main() {
+ int graph[V][V] = {
+ {0, 4, 0, 0, 0, 0, 0, 8, 0},
+ {4, 0, 8, 0, 0, 0, 0, 11, 0},
+ {0, 8, 0, 7, 0, 4, 0, 0, 2},
+ {0, 0, 7, 0, 9, 14, 0, 0, 0},
+ {0, 0, 0, 9, 0, 10, 0, 0, 0},
+ {0, 0, 4, 14, 10, 0, 2, 0, 0},
+ {0, 0, 0, 0, 0, 2, 0, 1, 6},
+ {8, 11, 0, 0, 0, 0, 1, 0, 7},
+ {0, 0, 2, 0, 0, 0, 6, 7, 0}
+ };
+ 
+ dijkstra(graph, 0); 
+ 
+ return 0;
+}
+
+Q.2) Write a program for finding Topological sorting for Directed Acyclic Graph (DAG)
+
+#include<stdio.h>
+int main()
+{
+	int i,j,k,n,a[5][5], in[5],flag[5],c=0;
+	printf("\nHow many vertices: ");
+  scanf("%d",&n);
+  for(i=0;i<n; i++)
+  {
+    for(j=0;j<n; j++)
+    {
+	a[i][j]=0;
+	if(i!=j)
+	{
+		
+		printf("\n enter if  there edge is bet %d & %d =",i,j);
+        scanf("%d",&a[i][j]);	
+	}
+	}
+  }
+	printf("\n The Adjacency Matrix is : \n");
+	for(i=0;i<n; i++)
+	{
+    for(j=0;j<n; j++)
+    {
+      printf("%d\t",a[i][j]);
+    }
+    printf("\n");
+	}
+	for(i=0;i<n; i++)
+	{
+		in[i]=0;
+		flag[i]=0;
+	}
+	for(i=0; i<n; i++)
+	{
+    for(j=0; j<n; j++)
+    {
+      in[i]=in[i]+a[j][i];
+    }
+	}
+	printf("\n The Topological order is \n");
+	while (c<n)
+	{
+		for(k=0; k<n; k++)
+		{
+			if((in[k]==0)  &&  (flag[k]==0))
+			{
+				printf("v%d",k+1);
+				flag[k]=1;
+	      	
+	     	}
+		
+	     
+		for(i=0; i<n; i++)
+		{
+		if(a[k][i]==1)
+		in[i]--;
+		}
+		c++;
+	}
+}
+}

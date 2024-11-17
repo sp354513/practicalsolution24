@@ -1,0 +1,155 @@
+Q.1) Write a programs to implement DFS (Depth First Search) and determine the time
+complexity for the same.
+
+#include<stdio.h>
+ int a[5][5] , stack[5],top=-1,vis[5];
+
+
+void dfs();
+void push();
+int pop();
+
+
+void main()
+{
+	int i,j,n,s;
+	printf("\n enter how many values :");
+	scanf("%d",&n);
+	for(i=1 ; i<n ; i++)
+	{
+	for(j=1 ; j<n ;j++)
+	{
+	printf("\n enter if  there edge is bet %d & %d =",i,j);
+	scanf("%d",&a[i][j]);
+	}
+	}
+	printf("\n the adjuncy matrix is \n");
+	for(i=1 ; i<n ;i++)
+	{
+	for(j=1 ; j<n ; j++)
+	{
+	printf("%d\t",a[i][j]);
+	}
+	printf("\n");
+	}
+	printf("\n enter starting vertex x :");
+	scanf("%d",&s);
+	
+	for(i=1 ; i<n ; i++)
+	vis[i]=0;
+	
+	dfs(a,n);
+	
+   }
+ 
+    void dfs(int s , int n)
+    {
+    	int k;
+    	push(s);
+    	vis[s]=1;
+    	
+    	k=pop();
+    	
+    	if(k !=0)
+    	printf("%d",k);
+    	
+    	while(k !=0)
+    	{
+    		int i;
+    	for( i=0 ; i<n ; i++)
+    	{
+    	if(a[k][i]!=0  &&  (vis[i]==0))
+    	{
+    		push(i);
+    		vis[i]=1;
+    		
+		}
+		k=pop();
+		if(k !=0)
+		printf("%d",k);
+		}
+		}
+		int i;
+    	for(i=1 ; i<n ; i++)
+    	
+    	if(vis[i]==0)
+        	
+        dfs(i,n);		
+		}   
+		
+		
+		
+	 void push(int x)
+	 {
+	 	if(top==4)
+	 	printf("\n stack overflow ");
+	 	else
+	 	stack[++top==x];
+	 }
+	
+	 	int pop()
+	 	{
+	 	int k;
+	 	if(top==-1)
+	 	return 0;
+	 	else
+	 	{
+	 		k=stack[top--];
+	 		return k;
+		   }
+		 }
+	 
+    	
+    	
+Q.2) Write a program to find shortest paths from a given vertex in a weighted connected
+graph, to other vertices using Dijkstra’s algorithm.
+
+#include <stdio.h>
+#include <limits.h>
+#define V 9
+
+int minDistance(int dist[], int sptSet[]) {
+ int min = INT_MAX, min_index;
+ for (int v = 0; v < V; v++)
+ if (sptSet[v] == 0 && dist[v] <= min)
+ min = dist[v], min_index = v;
+ return min_index;
+}
+void printSolution(int dist[]) {
+ printf("Vertex \t Distance from Source\n");
+ for (int i = 0; i < V; i++)
+ printf("%d \t %d\n", i, dist[i]);
+}
+
+void dijkstra(int graph[V][V], int src) {
+ int dist[V]; 
+ int sptSet[V]; 
+
+ for (int i = 0; i < V; i++)
+ dist[i] = INT_MAX, sptSet[i] = 0;
+ dist[src] = 0;
+ for (int count = 0; count < V - 1; count++) {
+
+ int u = minDistance(dist, sptSet);
+ sptSet[u] = 1;
+ for (int v = 0; v < V; v++)
+
+ if (!sptSet[v] && graph[u][v] && dist[u] != INT_MAX && dist[u] + graph[u][v] < dist[v])
+ dist[v] = dist[u] + graph[u][v];
+ }
+ printSolution(dist);
+}
+int main() {
+ int graph[V][V] = {
+ {0, 4, 0, 0, 0, 0, 0, 8, 0},
+ {4, 0, 8, 0, 0, 0, 0, 11, 0},
+ {0, 8, 0, 7, 0, 4, 0, 0, 2},
+ {0, 0, 7, 0, 9, 14, 0, 0, 0},
+ {0, 0, 0, 9, 0, 10, 0, 0, 0},
+ {0, 0, 4, 14, 10, 0, 2, 0, 0},
+ {0, 0, 0, 0, 0, 2, 0, 1, 6},
+ {8, 11, 0, 0, 0, 0, 1, 0, 7},
+ {0, 0, 2, 0, 0, 0, 6, 7, 0}};
+ dijkstra(graph, 0);
+ return 0;
+}

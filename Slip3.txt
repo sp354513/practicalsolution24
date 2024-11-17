@@ -1,0 +1,110 @@
+Q.1) Write a program to sort a given set of elements using the Quick sort method and determine 
+the time required to sort the elements
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+void swap(int* a, int* b) {
+ int temp = *a;
+ *a = *b;
+ *b = temp;
+}
+int partition(int arr[], int low, int high) {
+ int pivot = arr[high];
+ int i = low - 1;
+ for (int j = low; j < high; j++) {
+ if (arr[j] < pivot) {
+ i++;
+ swap(&arr[i], &arr[j]);
+ }
+ }
+ swap(&arr[i + 1], &arr[high]);
+ return (i + 1);
+}
+void quickSort(int arr[], int low, int high) {
+ if (low < high) {
+ int pivotIndex = partition(arr, low, high);
+ quickSort(arr, low, pivotIndex - 1);
+ quickSort(arr, pivotIndex + 1, high);
+ }
+}
+int main() {
+ int n;
+ printf("Enter the number of elements: ");
+ scanf("%d", &n);
+ int arr[n];
+ printf("Enter %d elements: ", n);
+ for (int i = 0; i < n; i++) {
+ scanf("%d", &arr[i]);
+ }
+ clock_t start = clock();
+ quickSort(arr, 0, n - 1);
+ clock_t end = clock();
+ printf("Sorted array: ");
+ for (int i = 0; i < n; i++) {
+ printf("%d ", arr[i]);
+ }
+ printf("\n");
+ double time_spent = (double)(end - start) / CLOCKS_PER_SEC;
+ printf("Time taken to sort: %f seconds\n", time_spent);
+ return 0;
+}
+
+Q.2) Write a program to find Minimum Cost Spanning Tree of a given undirected graph using 
+Prims algorithm 
+
+#include <stdio.h>
+#include <limits.h>
+#define V 5
+int minKey(int key[], int mstSet[]) {
+ int min = INT_MAX, min_index;
+ for (int v = 0; v < V; v++) {
+ if (mstSet[v] == 0 && key[v] < min) {
+ min = key[v];
+ min_index = v;
+ }
+ }
+ return min_index;
+}
+void printMST(int parent[], int graph[V][V]) {
+ printf("Edge \tWeight\n");
+ for (int i = 1; i < V; i++)
+ printf("%d - %d \t%d \n", parent[i], i, graph[i][parent[i]]);
+}
+void primMST(int graph[V][V]) {
+ int parent[V]; 
+ int key[V];
+ int mstSet[V];
+ for (int i = 0; i < V; i++) {
+ key[i] = INT_MAX;
+ mstSet[i] = 0;
+ }
+ key[0] = 0; 
+ parent[0] = -1; 
+ for (int count = 0; count < V - 1; count++) {
+ int u = minKey(key, mstSet);
+ mstSet[u] = 1;
+ for (int v = 0; v < V; v++) {
+ if (graph[u][v] && mstSet[v] == 0 && graph[u][v] < key[v]) {
+ parent[v] = u;
+ key[v] = graph[u][v];
+ } } }
+ printMST(parent, graph);
+}
+int main() {
+ /* Let us create the following graph
+ 2 3
+ (0)--(1)--(2)
+ | / \ |
+ 6| 8/ \5 |7
+ | / \ |
+ (3)-------(4)
+ 9 */
+ int graph[V][V] = {{0, 2, 0, 6, 0},
+ {2, 0, 3, 8, 5},
+ {0, 3, 0, 0, 7},
+ {6, 8, 0, 0, 9},
+ {0, 5, 7, 9, 0}};
+ primMST(graph);
+ return 0;
+}

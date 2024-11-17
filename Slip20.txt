@@ -1,0 +1,131 @@
+Q.1) Write a program to implement for finding Topological sorting and determine the time 
+complexity for the same. 
+
+#include<stdio.h>
+#include<stdlib.h>
+#define MAX_NODES 100
+struct Node {
+ int value;
+ struct Node* next;
+};
+struct Graph {
+ int numNodes;
+ struct Node* adjacencyList[MAX_NODES];
+};
+struct Node* createNode(int value) {
+ struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+ newNode->value = value;
+ newNode->next = NULL;
+ return newNode;
+}
+void addEdge(struct Graph* graph, int src, int dest) {
+ struct Node* newNode = createNode(dest);
+ newNode->next = graph->adjacencyList[src];
+ graph->adjacencyList[src] = newNode;
+}
+void DFS(struct Graph* graph, int node, int visited[], int stack[], int* top) {
+ visited[node] = 1;
+ struct Node* current = graph->adjacencyList[node];
+ while (current != NULL) {
+ int neighbor = current->value;
+ if (!visited[neighbor]) {
+ DFS(graph, neighbor, visited, stack, top);
+ }
+ current = current->next;
+ }
+ stack[++(*top)] = node;
+}
+void topologicalSort(struct Graph* graph) {
+ int visited[MAX_NODES] = {0};
+ int stack[MAX_NODES];
+ int top = -1;
+ for (int i = 0; i < graph->numNodes; ++i) {
+ if (!visited[i]) {
+ DFS(graph, i, visited, stack, &top);
+ }
+ }
+ printf("Topological Sorting: ");
+ while (top >= 0) {
+ printf("%d ", stack[top--]);
+ }
+}
+int main() {
+ struct Graph* graph = (struct Graph*)malloc(sizeof(struct Graph));
+ graph->numNodes = 6; 
+ for (int i = 0; i < graph->numNodes; ++i) {
+ graph->adjacencyList[i] = NULL;
+ }
+ addEdge(graph, 5, 2);
+ addEdge(graph, 5, 0);
+ addEdge(graph, 4, 0);
+ addEdge(graph, 4, 1);
+ addEdge(graph, 2, 3);
+ addEdge(graph, 3, 1);
+ topologicalSort(graph);
+ return 0;
+}
+
+Q.2) Write a program to solve N Queens Problem using Backtracking.
+
+#include <stdio.h>
+#include <stdbool.h>
+#define N 8
+int board[N][N];
+void printSolution() {
+ for (int i = 0; i < N; i++) {
+ for (int j = 0; j < N; j++) {
+ printf("%2d ", board[i][j]);
+ }
+ printf("\n");
+ }
+}
+bool isSafe(int row, int col) {
+ for (int i = 0; i < col; i++) {
+ if (board[row][i] == 1) {
+ return false;
+ }
+ }
+ for (int i = row, j = col; i >= 0 && j >= 0; i--, j--) {
+ if (board[i][j] == 1) {
+ return false;
+ }
+ }
+ for (int i = row, j = col; i < N && j >= 0; i++, j--) {
+ if (board[i][j] == 1) {
+ return false;
+ }
+ }
+ return true;
+}
+bool solveNQueensUtil(int col) {
+ if (col >= N) {
+ return true; 
+ }
+ for (int i = 0; i < N; i++) {
+ if (isSafe(i, col)) {
+ board[i][col] = 1;
+ if (solveNQueensUtil(col + 1)) {
+ return true;
+ }
+ board[i][col] = 0; 
+ }
+ }
+ return false; 
+}
+bool solveNQueens() {
+ if (!solveNQueensUtil(0)) {
+ printf("Solution does not exist.\n");
+ return false;
+ }
+ printf("Solution for N-Queens problem:\n");
+ printSolution();
+ return true;
+}
+int main() {
+ if (N <= 3) {
+ printf("No solution exists for N less than or equal to 3.\n");
+ return 1;
+ }
+ solveNQueens();
+ return 0;
+}
