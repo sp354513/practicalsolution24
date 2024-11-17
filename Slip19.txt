@@ -1,89 +1,277 @@
-Q.1) Write a program to determine if a given graph is a Hamiltonian cycle or
-Not.
+Q.1 Write a Java Program to implement Factory method for Pizza Store with createPizza(),
+orederPizza(), prepare(), Bake(), cut(), box(). Use this to create variety of pizza’s like
+NyStyleCheesePizza, ChicagoStyleCheesePizza etc
+Java Program to Implement the Factory Method Pattern:
+1. Pizza Class (Abstract Base Class)
+This class defines the methods that all pizzas will share.
+java
+Copy code
+public abstract class Pizza {
+ protected String name;
+ // Common pizza methods that all pizza types will use
+ public void prepare() {
+ System.out.println("Preparing " + name);
+ }
+ public void bake() {
+ System.out.println("Baking " + name);
+ }
+ public void cut() {
+ System.out.println("Cutting " + name);
+ }
+ public void box() {
+ System.out.println("Boxing " + name);
+ }
+ // Get pizza name
+ public String getName() {
+ return name;
+ }
+}
+2. Concrete Pizza Classes
+Each of these classes represents a different style of pizza.
+NYStyleCheesePizza Class:
+java
+Copy code
+public class NYStyleCheesePizza extends Pizza {
+ public NYStyleCheesePizza() {
+ name = "New York Style Cheese Pizza";
+ }
+}
+ChicagoStyleCheesePizza Class:
+java
+Copy code
+public class ChicagoStyleCheesePizza extends Pizza {
+ public ChicagoStyleCheesePizza() {
+ name = "Chicago Style Cheese Pizza";
+ }
+}
+3. PizzaStore Class (Factory Method)
+The PizzaStore class will define the abstract method createPizza() that must be implemented
+by subclasses to return the specific type of pizza.
+java
+Copy code
+public abstract class PizzaStore {
+ // Factory Method
+ public Pizza orderPizza(String type) {
+ Pizza pizza;
+ pizza = createPizza(type); // Create pizza based on the type
+ pizza.prepare(); // Prepare the pizza
+ pizza.bake(); // Bake the pizza
+ pizza.cut(); // Cut the pizza
+ pizza.box(); // Box the pizza
+ return pizza;
+ }
+ // Abstract Factory Method, to be implemented by concrete stores
+ protected abstract Pizza createPizza(String type);
+}
+4. Concrete Pizza Stores
+Each store subclass will implement the createPizza() method, which will return the
+appropriate pizza based on the input type.
+NYPizzaStore Class:
+java
+Copy code
+public class NYPizzaStore extends PizzaStore {
+ @Override
+ protected Pizza createPizza(String type) {
+ Pizza pizza = null;
+ if (type.equals("cheese")) {
+ pizza = new NYStyleCheesePizza();
+ }
+ // Add more types here if necessary, like "veggie", "clam", etc.
+ return pizza;
+ }
+}
+ChicagoPizzaStore Class:
+java
+Copy code
+public class ChicagoPizzaStore extends PizzaStore {
+ @Override
+ protected Pizza createPizza(String type) {
+ Pizza pizza = null;
+ if (type.equals("cheese")) {
+ pizza = new ChicagoStyleCheesePizza();
+ }
+ // Add more types here if necessary, like "veggie", "clam", etc.
+ return pizza;
+ }
+}
+5. Main Class to Test the Program
+In the PizzaTestDrive class, we will create instances of different pizza stores and order pizzas.
+java
+Copy code
+public class PizzaTestDrive {
+ public static void main(String[] args) {
+ // Create a New York Pizza Store
+ PizzaStore nyStore = new NYPizzaStore();
+ // Order a Cheese Pizza from NY Pizza Store
+ Pizza pizza = nyStore.orderPizza("cheese");
+ System.out.println("Ethan ordered a " + pizza.getName() + "\n");
+ // Create a Chicago Pizza Store
+ PizzaStore chicagoStore = new ChicagoPizzaStore();
+ // Order a Cheese Pizza from Chicago Pizza Store
+ pizza = chicagoStore.orderPizza("cheese");
+ System.out.println("Joel ordered a " + pizza.getName() + "\n");
+ }
+}
+Output:
+mathematica
+Copy code
+Preparing New York Style Cheese Pizza
+Baking New York Style Cheese Pizza
+Cutting New York Style Cheese Pizza
+Boxing New York Style Cheese Pizza
+Ethan ordered a New York Style Cheese Pizza
+Preparing Chicago Style Cheese Pizza
+Baking Chicago Style Cheese Pizza
+Cutting Chicago Style Cheese Pizza
+Boxing Chicago Style Cheese Pizza
+Joel ordered a Chicago Style Cheese Pizza
 
 
-#include <stdio.h>
-#define MAX_ITEMS 100
-#define MAX_WEIGHT 100
-int max(int a, int b) {
- return (a > b) ? a : b;
-}
-int knapsack(int values[], int weights[], int n, int capacity) {
- int dp[MAX_ITEMS + 1][MAX_WEIGHT + 1];
- for (int i = 0; i <= n; i++) {
- for (int w = 0; w <= capacity; w++) {
- if (i == 0 || w == 0) {
- dp[i][w] = 0;
- } else if (weights[i - 1] <= w) {
- dp[i][w] = max(values[i - 1] + dp[i - 1][w - weights[i - 1]], dp[i - 1][w]);
- } else {
- dp[i][w] = dp[i - 1][w];
- }
- }
- }
- return dp[n][capacity];
-}
-int main() {
- int values[] = {60, 100, 120};
- int weights[] = {10, 20, 30};
- int n = sizeof(values) / sizeof(values[0]);
- int capacity = 50;
- int result = knapsack(values, weights, n, capacity);
- printf("Maximum value in knapsack = %d\n", result);
- return 0;
-}
 
-Q.2) Write a program to show board configuration of 4 queens’ problem.
 
-#include <stdio.h>
-#include <stdbool.h>
-#define N 4
-void printSolution(int board[N][N]) {
- for (int i = 0; i < N; i++) {
- for (int j = 0; j < N; j++) {
- printf("%d ", board[i][j]);
- }
- printf("\n");
- }
-}
-bool isSafe(int board[N][N], int row, int col) {
- for (int i = 0; i < col; i++) {
- if (board[row][i])
- return false;
- }
- for (int i = row, j = col; i >= 0 && j >= 0; i--, j--) {
- if (board[i][j])
- return false;
- }
- for (int i = row, j = col; i < N && j >= 0; i++, j--) {
- if (board[i][j])
- return false;
- }
- return true;
-}
-bool solveNQueensUtil(int board[N][N], int col) {
- if (col >= N)
- return true;
- for (int i = 0; i < N; i++) {
- if (isSafe(board, i, col)) {
- board[i][col] = 1;
- if (solveNQueensUtil(board, col + 1))
- return true;
- board[i][col] = 0; 
- }
- }
- return false;
-}
-bool solveNQueens() {
- int board[N][N] = {0};
- if (!solveNQueensUtil(board, 0)) {
- printf("Solution does not exist");
- return false;
- }
- printSolution(board);
- return true;
-}
-int main() {
- solveNQueens();
- return 0;
-}
+
+Q.2 Start Raspberry Pi and Execute various Linux commands in command terminal window: ls,
+cd, touch, mv, rm, man, mkdir, rmdir, tar, gzip, cat, more, less, ps, sudo, cron, chown, chgrp,
+pingetc.
+Step 1: Start Raspberry Pi
+1. Power on the Raspberry Pi.
+2. Make sure it is connected to a monitor, keyboard, and mouse. Alternatively, you can
+connect to the Raspberry Pi using SSH if it is connected to your local network.
+Step 2: Open the Command Terminal
+Once the Raspberry Pi boots up:
+ If you're using a GUI interface, open the Terminal by clicking on the Terminal icon or
+pressing Ctrl + Alt + T.
+ If you're using SSH, open your SSH client (e.g., PuTTY) and connect to your Raspberry
+Pi by using its IP address and login credentials.
+Step 3: Execute the Various Linux Commands
+Here is a list of common Linux commands and their usage. Execute these commands one by
+one in the terminal window.
+1. ls – List directory contents
+bash
+Copy code
+ls
+This will list all the files and directories in the current working directory.
+2. cd – Change directory
+bash
+Copy code
+cd /path/to/directory
+Use this command to navigate to a different directory. Replace /path/to/directory with the
+actual path.
+3. touch – Create an empty file
+bash
+Copy code
+touch myfile.txt
+This will create a new empty file called myfile.txt in the current directory.
+4. mv – Move or rename files
+bash
+Copy code
+mv myfile.txt /path/to/new/directory
+This will move the file myfile.txt to the new directory. You can also use this command to
+rename files:
+bash
+Copy code
+mv oldname.txt newname.txt
+5. rm – Remove files or directories
+bash
+Copy code
+rm myfile.txt
+This will delete the file myfile.txt.
+To delete a directory (and its contents):
+bash
+Copy code
+rm -r mydirectory
+6. man – View manual for commands
+bash
+Copy code
+man ls
+This will display the manual page for the ls command. You can exit the manual by pressing q.
+7. mkdir – Create a directory
+bash
+Copy code
+mkdir mydirectory
+This will create a new directory called mydirectory.
+8. rmdir – Remove an empty directory
+bash
+Copy code
+rmdir mydirectory
+This will remove an empty directory called mydirectory.
+9. tar – Archive files
+bash
+Copy code
+tar -cvf archive.tar directory
+This will create an archive called archive.tar of the specified directory. The options used:
+ -c: Create a new archive.
+ -v: Verbose mode (shows files being archived).
+ -f: Specifies the archive file name.
+To extract the archive:
+bash
+Copy code
+tar -xvf archive.tar
+10. gzip – Compress files
+bash
+Copy code
+gzip myfile.txt
+This will compress the file myfile.txt into myfile.txt.gz.
+To decompress a .gz file:
+bash
+Copy code
+gzip -d myfile.txt.gz
+11. cat – Concatenate and display file content
+bash
+Copy code
+cat myfile.txt
+This will display the contents of myfile.txt on the terminal.
+12. more – View file contents page by page
+bash
+Copy code
+more myfile.txt
+This will allow you to view the contents of myfile.txt one page at a time.
+13. less – View file contents interactively
+bash
+Copy code
+less myfile.txt
+This is similar to more, but allows you to scroll up and down interactively.
+14. ps – Display running processes
+bash
+Copy code
+ps aux
+This will show a list of all running processes. ps aux displays all processes, including those
+from other users.
+15. sudo – Execute commands with root privileges
+bash
+Copy code
+sudo apt update
+This command updates the package list on your Raspberry Pi. sudo is used to execute commands
+with elevated privileges.
+16. cron – Schedule tasks to run at specified times
+bash
+Copy code
+crontab -e
+This will open the cron jobs editor. You can use it to schedule tasks to run at specific times. A
+cron job entry might look like this:
+bash
+Copy code
+0 5 * * * /path/to/script.sh
+This would run /path/to/script.sh every day at 5:00 AM.
+17. chown – Change file owner and group
+bash
+Copy code
+sudo chown pi:pi myfile.txt
+This will change the owner and group of myfile.txt to pi.
+18. chgrp – Change group ownership
+bash
+Copy code
+sudo chgrp pi myfile.txt
+This will change the group ownership of myfile.txt to pi.
+19. ping – Send ICMP Echo Request
+bash
+Copy code
+ping google.com
+This will send a ping request to google.com to check the network connectivity. To stop the ping
+process, press Ctrl+C.
+20. etc – Directory for configuration files
+In Linux, /etc is a directory that holds configuration files for the system. You can list files
+in /etc with:
+bash
+Copy code
+ls /etc

@@ -1,110 +1,119 @@
-Q.1) Write a program to sort a given set of elements using the Quick sort method and determine 
-the time required to sort the elements
+Q.1 Write a JAVA Program to implement built-in support (java.util.Observable) Weather station
+with members temperature, humidity, pressure and methods mesurmentsChanged(),
+setMesurment(), getTemperature(), getHumidity(), getPressure()
+Code Implementation:
+1. WeatherStation.java (Observable Class)
+java
+Copy code
+import java.util.Observable;
+public class WeatherStation extends Observable {
+ private float temperature;
+ private float humidity;
+ private float pressure;
+ // Method to notify observers when measurements change
+ public void measurementsChanged() {
+ setChanged(); // Marks the observable as changed
+ notifyObservers(); // Notifies all observers
+ }
+ // Set new measurements and notify observers
+ public void setMeasurements(float temperature, float humidity, float
+pressure) {
+ this.temperature = temperature;
+ this.humidity = humidity;
+ this.pressure = pressure;
+ measurementsChanged(); // Notify observers when new measurements are
+set
+ }
+ // Getters for weather measurements
+ public float getTemperature() {
+ return temperature;
+ }
+ public float getHumidity() {
+ return humidity;
+ }
+ public float getPressure() {
+ return pressure;
+ }
+}
+2. WeatherDisplay.java (Observer Class)
+java
+Copy code
+import java.util.Observable;
+import java.util.Observer;
+public class WeatherDisplay implements Observer {
+ private float temperature;
+ private float humidity;
+ private float pressure;
+ // Update method to receive notifications from the Observable
+ @Override
+ public void update(Observable o, Object arg) {
+ if (o instanceof WeatherStation) {
+ WeatherStation weatherStation = (WeatherStation) o;
+ this.temperature = weatherStation.getTemperature();
+ this.humidity = weatherStation.getHumidity();
+ this.pressure = weatherStation.getPressure();
+ display(); // Display the updated weather information
+ }
+ }
+ // Display the updated weather information
+ public void display() {
+ System.out.println("Weather Data Updated: ");
+ System.out.println("Temperature: " + temperature + "°C");
+ System.out.println("Humidity: " + humidity + "%");
+ System.out.println("Pressure: " + pressure + " hPa");
+ System.out.println("-----------------------------");
+ }
+}
+3. Main.java (Testing the Program)
+java
+Copy code
+public class Main {
+ public static void main(String[] args) {
+ // Create a WeatherStation instance (Observable)
+ WeatherStation weatherStation = new WeatherStation();
+ // Create a WeatherDisplay instance (Observer)
+ WeatherDisplay weatherDisplay = new WeatherDisplay();
+ // Add the WeatherDisplay as an observer to the WeatherStation
+ weatherStation.addObserver(weatherDisplay);
+ // Simulate changing weather measurements
+ weatherStation.setMeasurements(25.0f, 65.0f, 1013.0f); // Temp: 25°C,
+Humidity: 65%, Pressure: 1013 hPa
+ weatherStation.setMeasurements(28.0f, 70.0f, 1010.0f); // Temp: 28°C,
+Humidity: 70%, Pressure: 1010 hPa
+ weatherStation.setMeasurements(22.0f, 60.0f, 1020.0f); // Temp: 22°C,
+Humidity: 60%, Pressure: 1020 hPa
+ }
+}
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-void swap(int* a, int* b) {
- int temp = *a;
- *a = *b;
- *b = temp;
-}
-int partition(int arr[], int low, int high) {
- int pivot = arr[high];
- int i = low - 1;
- for (int j = low; j < high; j++) {
- if (arr[j] < pivot) {
- i++;
- swap(&arr[i], &arr[j]);
- }
- }
- swap(&arr[i + 1], &arr[high]);
- return (i + 1);
-}
-void quickSort(int arr[], int low, int high) {
- if (low < high) {
- int pivotIndex = partition(arr, low, high);
- quickSort(arr, low, pivotIndex - 1);
- quickSort(arr, pivotIndex + 1, high);
- }
-}
-int main() {
- int n;
- printf("Enter the number of elements: ");
- scanf("%d", &n);
- int arr[n];
- printf("Enter %d elements: ", n);
- for (int i = 0; i < n; i++) {
- scanf("%d", &arr[i]);
- }
- clock_t start = clock();
- quickSort(arr, 0, n - 1);
- clock_t end = clock();
- printf("Sorted array: ");
- for (int i = 0; i < n; i++) {
- printf("%d ", arr[i]);
- }
- printf("\n");
- double time_spent = (double)(end - start) / CLOCKS_PER_SEC;
- printf("Time taken to sort: %f seconds\n", time_spent);
- return 0;
-}
 
-Q.2) Write a program to find Minimum Cost Spanning Tree of a given undirected graph using 
-Prims algorithm 
 
-#include <stdio.h>
-#include <limits.h>
-#define V 5
-int minKey(int key[], int mstSet[]) {
- int min = INT_MAX, min_index;
- for (int v = 0; v < V; v++) {
- if (mstSet[v] == 0 && key[v] < min) {
- min = key[v];
- min_index = v;
- }
- }
- return min_index;
+Q. 2 Write a program to detects the vibration of an object with sensor using
+Arduino.
+// Define the pin for the vibration sensor
+const int vibrationPin = 7; // Pin connected to the OUT pin of the SW-420
+sensor
+const int ledPin = 13; // Pin connected to the LED
+void setup() {
+ // Set vibration sensor pin as input
+ pinMode(vibrationPin, INPUT);
+ // Set the LED pin as output
+ pinMode(ledPin, OUTPUT);
+ // Start the serial communication for debugging
+ Serial.begin(9600);
 }
-void printMST(int parent[], int graph[V][V]) {
- printf("Edge \tWeight\n");
- for (int i = 1; i < V; i++)
- printf("%d - %d \t%d \n", parent[i], i, graph[i][parent[i]]);
-}
-void primMST(int graph[V][V]) {
- int parent[V]; 
- int key[V];
- int mstSet[V];
- for (int i = 0; i < V; i++) {
- key[i] = INT_MAX;
- mstSet[i] = 0;
+void loop() {
+ // Read the state of the vibration sensor
+ int vibrationState = digitalRead(vibrationPin);
+ // Check if the sensor detects vibration (HIGH state)
+ if (vibrationState == HIGH) {
+ // If vibration is detected, turn on the LED
+ digitalWrite(ledPin, HIGH);
+ Serial.println("Vibration detected!");
+ } else {
+ // If no vibration, turn off the LED
+ digitalWrite(ledPin, LOW);
+ Serial.println("No vibration detected.");
  }
- key[0] = 0; 
- parent[0] = -1; 
- for (int count = 0; count < V - 1; count++) {
- int u = minKey(key, mstSet);
- mstSet[u] = 1;
- for (int v = 0; v < V; v++) {
- if (graph[u][v] && mstSet[v] == 0 && graph[u][v] < key[v]) {
- parent[v] = u;
- key[v] = graph[u][v];
- } } }
- printMST(parent, graph);
-}
-int main() {
- /* Let us create the following graph
- 2 3
- (0)--(1)--(2)
- | / \ |
- 6| 8/ \5 |7
- | / \ |
- (3)-------(4)
- 9 */
- int graph[V][V] = {{0, 2, 0, 6, 0},
- {2, 0, 3, 8, 5},
- {0, 3, 0, 0, 7},
- {6, 8, 0, 0, 9},
- {0, 5, 7, 9, 0}};
- primMST(graph);
- return 0;
+ // Small delay to debounce
+ delay(100);
 }

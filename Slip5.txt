@@ -1,0 +1,73 @@
+Q.1 Write a Java Program to implement Adapter pattern for Enumeration iterator
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Vector;
+// Adapter class that adapts Enumeration to Iterator
+class EnumerationIteratorAdapter<T> implements Iterator<T> {
+private Enumeration<T> enumeration;
+// Constructor
+public EnumerationIteratorAdapter(Enumeration<T> enumeration) {
+this.enumeration = enumeration;
+}
+// hasNext() method from Iterator
+@Override
+public boolean hasNext() {
+return enumeration.hasMoreElements();
+}
+// next() method from Iterator
+@Override
+public T next() {
+return enumeration.nextElement();
+}
+// remove() method from Iterator is unsupported for Enumeration
+@Override
+public void remove() {
+throw new UnsupportedOperationException("Remove not supported.");
+}
+}
+public class AdapterPatternExample {
+public static void main(String[] args) {
+// Creating a Vector and populating it with some data
+Vector<String> vector = new Vector<>();
+vector.add("Element1");
+vector.add("Element2");
+vector.add("Element3");
+// Getting an Enumeration from the Vector
+Enumeration<String> enumeration = vector.elements();
+// Adapting Enumeration to Iterator
+Iterator<String> iterator = new EnumerationIteratorAdapter<>(enumeration);
+// Using the adapted Iterator
+System.out.println("Using Enumeration adapted to Iterator:");
+while (iterator.hasNext()) {
+System.out.println(iterator.next());
+}
+}
+}
+
+
+
+Q.2 Write a program to connect with the available Wi-Fi using Arduino.
+#include <ESP8266WiFi.h> // Use <WiFi.h> for ESP32
+// Replace with your network credentials
+const char* ssid = "your_SSID";
+const char* password = "your_PASSWORD";
+void setup() {
+Serial.begin(115200);
+delay(10);
+// Connect to Wi-Fi network
+Serial.println();
+Serial.print("Connecting to ");
+Serial.println(ssid);
+WiFi.begin(ssid, password);
+while (WiFi.status() != WL_CONNECTED) {
+delay(500);
+Serial.print(".");
+}
+Serial.println("");
+Serial.println("Wi-Fi connected successfully.");
+Serial.println("IP address: ");
+Serial.println(WiFi.localIP());
+}
+void loop() {
+// Your code here (e.g., HTTP requests, etc.)
+}

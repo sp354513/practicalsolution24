@@ -1,124 +1,154 @@
-Q.1) Write a program to implement a Merge Sort algorithm to sort a given set of elements and 
-determine the time required to sort the elements 
-
-#include<stdio.h>
-void merge( int a[],int low ,int mid ,int high)
-{
-int i,j,k,b[10];
-i=low;
-j=mid+1;
-k=low;
-while((i<=mid) && (j<=high))
-{
-if(a[i]<a[j])
-{
-b[k]=a[i];
-i++;k++;
+Q.1 Write a Java Program to implement Factory method for Pizza Store with createPizza(),
+orederPizza(), prepare(), Bake(), cut(), box(). Use this to create variety of pizza’s like
+NyStyleCheesePizza, ChicagoStyleCheesePizza etc.
+1. Pizza Interface
+java
+Copy code
+public interface Pizza {
+ void prepare();
+ void bake();
+ void cut();
+ void box();
 }
-else
-{
-b[k]=a[j];
-j++;k++;
+2. Concrete Pizza Classes
+Each specific pizza will implement the Pizza interface.
+NyStyleCheesePizza.java
+java
+Copy code
+public class NyStyleCheesePizza implements Pizza {
+ @Override
+ public void prepare() {
+ System.out.println("Preparing New York Style Cheese Pizza...");
+ }
+ @Override
+ public void bake() {
+ System.out.println("Baking New York Style Cheese Pizza...");
+ }
+ @Override
+ public void cut() {
+ System.out.println("Cutting New York Style Cheese Pizza...");
+ }
+ @Override
+ public void box() {
+ System.out.println("Boxing New York Style Cheese Pizza...");
+ }
 }
+ChicagoStyleCheesePizza.java
+java
+Copy code
+public class ChicagoStyleCheesePizza implements Pizza {
+ @Override
+ public void prepare() {
+ System.out.println("Preparing Chicago Style Cheese Pizza...");
+ }
+ @Override
+ public void bake() {
+ System.out.println("Baking Chicago Style Cheese Pizza...");
+ }
+ @Override
+ public void cut() {
+ System.out.println("Cutting Chicago Style Cheese Pizza...");
+ }
+ @Override
+ public void box() {
+ System.out.println("Boxing Chicago Style Cheese Pizza...");
+ }
 }
-while(i<=mid)
-{
-b[k]=a[i];
-k++;
-i++;
+3. PizzaStore Class with Factory Method
+The PizzaStore class will have a createPizza() method that is overridden by subclasses to
+create different types of pizzas.
+java
+Copy code
+public abstract class PizzaStore {
+ // The orderPizza() method is the factory method that creates a pizza
+ public Pizza orderPizza(String type) {
+ Pizza pizza = createPizza(type); // Factory method
+ pizza.prepare();
+ pizza.bake();
+ pizza.cut();
+ pizza.box();
+ return pizza;
+ }
+ // This method will be overridden by subclasses to create specific pizza
+types
+ protected abstract Pizza createPizza(String type);
 }
-while(j<=high)
-{
-b[k]=a[j];
-k++;
-j++;
-}
-for(i=low;i<=high;i++)
-{
-a[i]=b[i];
-}
-}
-void mergesort(int a[],int low,int high)
-{
-int mid;
-if(low<high)
-{
-mid = (low + high) /2;
-mergesort(a, low, mid);
-mergesort(a, mid+1, high);
-merge(a, low, mid, high);
-}
-}
-void main()
-{
-int a[10],i,n;
-printf("\nhow many number");
-scanf("%d",&n);
-printf(" \nenter the unsorted value=");
-for(i=0;i<n;i++)
-{
-scanf("%d",&a[i]);
-}
-mergesort(a,0,n-1);
-printf("\n sorted value are =");
-for(i=0;i<n;i++)
-{
-printf("%d\t",a[i]);
-}
-}
-
-Q.2) Write a program to implement Knapsack problems using Greedy method
-
-#include <stdio.h>
-#define MAX_ITEMS 100
-
-struct Item {
- int value;
- int weight;
-};
-
-int compare(const void *a, const void *b) {
- double ratio_a = ((double)(((struct Item *)a)->value)) / (((struct Item *)a)->weight);
- double ratio_b = ((double)(((struct Item *)b)->value)) / (((struct Item *)b)->weight);
- return ratio_b - ratio_a;
-}
-
-void knapsackGreedy(int capacity, struct Item items[], int n) {
-
- qsort(items, n, sizeof(struct Item), compare);
- int currentWeight = 0; // Current weight in the knapsack
- double totalValue = 0.0; // Total value of items selected
- printf("Selected items:\n");
- for (int i = 0; i < n; i++) {
-
- if (currentWeight + items[i].weight <= capacity) {
-
- printf("Item %d - Value: %d, Weight: %d\n", i + 1, items[i].value, items[i].weight);
- currentWeight += items[i].weight;
- totalValue += items[i].value;
+4. Concrete Pizza Store Subclasses
+We can now create specific pizza stores (like NyPizzaStore and ChicagoPizzaStore) that will
+implement the createPizza() method to create specific types of pizzas.
+NyPizzaStore.java
+java
+Copy code
+public class NyPizzaStore extends PizzaStore {
+ @Override
+ protected Pizza createPizza(String type) {
+ if (type.equals("cheese")) {
+ return new NyStyleCheesePizza();
  } else {
-
- int remainingCapacity = capacity - currentWeight;
- totalValue += items[i].value * ((double)remainingCapacity / items[i].weight);
- printf("Item %d - Value: %d, Weight: %d (Fraction: %.2lf)\n", i + 1, items[i].value, items[i].weight, 
-((double)remainingCapacity / items[i].weight));
- break;
+ // Add other pizza types as needed
+ return null;
  }
  }
- printf("Total Value: %.2lf\n", totalValue);
 }
-int main() {
- int capacity, n;
- printf("Enter the capacity of the knapsack: ");
- scanf("%d", &capacity);
- printf("Enter the number of items: ");
- scanf("%d", &n);
- struct Item items[MAX_ITEMS];
- printf("Enter the value and weight of each item:\n");
- for (int i = 0; i < n; i++) {
- printf("Item %d: ", i + 1);
- scanf("%d %d", &items[i].value, &items[i].weight);
+ChicagoPizzaStore.java
+java
+Copy code
+public class ChicagoPizzaStore extends PizzaStore {
+ @Override
+ protected Pizza createPizza(String type) {
+ if (type.equals("cheese")) {
+ return new ChicagoStyleCheesePizza();
+ } else {
+ // Add other pizza types as needed
+ return null;
  }
- knapsackGreedy(capacity, items, n);
- return 0;
+ }
+}
+5. Main Class to Test
+Now, let's implement a Main class to test the pizza store ordering process.
+java
+Copy code
+public class Main {
+ public static void main(String[] args) {
+ // Create a New York Pizza Store
+ PizzaStore nyPizzaStore = new NyPizzaStore();
+ // Order a Cheese Pizza from New York Pizza Store
+ Pizza nyPizza = nyPizzaStore.orderPizza("cheese");
+ System.out.println("\n-----\n");
+ // Create a Chicago Pizza Store
+ PizzaStore chicagoPizzaStore = new ChicagoPizzaStore();
+ // Order a Cheese Pizza from Chicago Pizza Store
+ Pizza chicagoPizza = chicagoPizzaStore.orderPizza("cheese");
+ }
+}
+
+
+
+Q.2 Write a program to sense a finger when it is placed on the board Arduino.
+[15 M]
+// Define the pin for the capacitive touch sensor
+const int touchPin = 7; // Pin connected to the SIG (signal) of the TTP223
+sensor
+const int ledPin = 13; // Pin connected to the LED
+void setup() {
+ // Set the touch sensor pin as input
+ pinMode(touchPin, INPUT);
+ // Set the LED pin as output
+ pinMode(ledPin, OUTPUT);
+ // Start serial communication for debugging
+ Serial.begin(9600);
+}
+void loop() {
+ // Read the state of the touch sensor
+ int touchState = digitalRead(touchPin);
+ // If the sensor detects a touch (HIGH state)
+ if (touchState == HIGH) {
+ digitalWrite(ledPin, HIGH); // Turn on the LED
+ Serial.println("Finger detected! LED ON");
+ } else {
+ digitalWrite(ledPin, LOW); // Turn off the LED
+ Serial.println("No finger detected. LED OFF");
+ }
+ // Small delay for stability
+ delay(100);
 }

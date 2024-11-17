@@ -1,155 +1,194 @@
-Q.1) Write a programs to implement DFS (Depth First Search) and determine the time
-complexity for the same.
-
-#include<stdio.h>
- int a[5][5] , stack[5],top=-1,vis[5];
-
-
-void dfs();
-void push();
-int pop();
-
-
-void main()
-{
-	int i,j,n,s;
-	printf("\n enter how many values :");
-	scanf("%d",&n);
-	for(i=1 ; i<n ; i++)
-	{
-	for(j=1 ; j<n ;j++)
-	{
-	printf("\n enter if  there edge is bet %d & %d =",i,j);
-	scanf("%d",&a[i][j]);
-	}
-	}
-	printf("\n the adjuncy matrix is \n");
-	for(i=1 ; i<n ;i++)
-	{
-	for(j=1 ; j<n ; j++)
-	{
-	printf("%d\t",a[i][j]);
-	}
-	printf("\n");
-	}
-	printf("\n enter starting vertex x :");
-	scanf("%d",&s);
-	
-	for(i=1 ; i<n ; i++)
-	vis[i]=0;
-	
-	dfs(a,n);
-	
-   }
- 
-    void dfs(int s , int n)
-    {
-    	int k;
-    	push(s);
-    	vis[s]=1;
-    	
-    	k=pop();
-    	
-    	if(k !=0)
-    	printf("%d",k);
-    	
-    	while(k !=0)
-    	{
-    		int i;
-    	for( i=0 ; i<n ; i++)
-    	{
-    	if(a[k][i]!=0  &&  (vis[i]==0))
-    	{
-    		push(i);
-    		vis[i]=1;
-    		
-		}
-		k=pop();
-		if(k !=0)
-		printf("%d",k);
-		}
-		}
-		int i;
-    	for(i=1 ; i<n ; i++)
-    	
-    	if(vis[i]==0)
-        	
-        dfs(i,n);		
-		}   
-		
-		
-		
-	 void push(int x)
-	 {
-	 	if(top==4)
-	 	printf("\n stack overflow ");
-	 	else
-	 	stack[++top==x];
-	 }
-	
-	 	int pop()
-	 	{
-	 	int k;
-	 	if(top==-1)
-	 	return 0;
-	 	else
-	 	{
-	 		k=stack[top--];
-	 		return k;
-		   }
-		 }
-	 
-    	
-    	
-Q.2) Write a program to find shortest paths from a given vertex in a weighted connected
-graph, to other vertices using Dijkstra’s algorithm.
-
-#include <stdio.h>
-#include <limits.h>
-#define V 9
-
-int minDistance(int dist[], int sptSet[]) {
- int min = INT_MAX, min_index;
- for (int v = 0; v < V; v++)
- if (sptSet[v] == 0 && dist[v] <= min)
- min = dist[v], min_index = v;
- return min_index;
+Q.1 Write a java program to implement Adapter pattern to design Heart Model to Beat Model
+Step-by-Step Solution:
+Step 1: Define the BeatMode Interface
+This will be the interface that we want to adapt the HeartModel to.
+java
+Copy code
+public interface BeatMode {
+ void beat();
 }
-void printSolution(int dist[]) {
- printf("Vertex \t Distance from Source\n");
- for (int i = 0; i < V; i++)
- printf("%d \t %d\n", i, dist[i]);
-}
-
-void dijkstra(int graph[V][V], int src) {
- int dist[V]; 
- int sptSet[V]; 
-
- for (int i = 0; i < V; i++)
- dist[i] = INT_MAX, sptSet[i] = 0;
- dist[src] = 0;
- for (int count = 0; count < V - 1; count++) {
-
- int u = minDistance(dist, sptSet);
- sptSet[u] = 1;
- for (int v = 0; v < V; v++)
-
- if (!sptSet[v] && graph[u][v] && dist[u] != INT_MAX && dist[u] + graph[u][v] < dist[v])
- dist[v] = dist[u] + graph[u][v];
+Step 2: Define the HeartModel Class
+This class represents the heart and has its own way of beating.
+java
+Copy code
+public class HeartModel {
+ // HeartModel's internal beat method
+ public void startBeating() {
+ System.out.println("Heart is beating...");
  }
- printSolution(dist);
 }
-int main() {
- int graph[V][V] = {
- {0, 4, 0, 0, 0, 0, 0, 8, 0},
- {4, 0, 8, 0, 0, 0, 0, 11, 0},
- {0, 8, 0, 7, 0, 4, 0, 0, 2},
- {0, 0, 7, 0, 9, 14, 0, 0, 0},
- {0, 0, 0, 9, 0, 10, 0, 0, 0},
- {0, 0, 4, 14, 10, 0, 2, 0, 0},
- {0, 0, 0, 0, 0, 2, 0, 1, 6},
- {8, 11, 0, 0, 0, 0, 1, 0, 7},
- {0, 0, 2, 0, 0, 0, 6, 7, 0}};
- dijkstra(graph, 0);
- return 0;
+Step 3: Create the HeartAdapter Class
+The HeartAdapter will adapt the HeartModel to the BeatMode interface.
+java
+Copy code
+public class HeartAdapter implements BeatMode {
+ private HeartModel heartModel;
+ // Constructor that takes the HeartModel instance
+ public HeartAdapter(HeartModel heartModel) {
+ this.heartModel = heartModel;
+ }
+ // Implement the beat method to call the HeartModel's startBeating
+ @Override
+ public void beat() {
+ heartModel.startBeating();
+ }
 }
+Step 4: Create the Client Code to Test the Adapter
+The client will use the BeatMode interface without knowing about the
+underlying HeartModel class.
+java
+Copy code
+public class HeartClient {
+ public static void main(String[] args) {
+ // Create a HeartModel object
+ HeartModel heart = new HeartModel();
+ // Create a HeartAdapter that adapts the HeartModel to the BeatMode
+interface
+ BeatMode beatMode = new HeartAdapter(heart);
+ // Use the beat method via the BeatMode interface
+ beatMode.beat();
+ }
+}
+Explanation:
+1. BeatMode Interface: This is the target interface that defines the method beat(). The
+client code expects objects of this type to perform the beating action.
+2. HeartModel Class: This is the existing class with a method startBeating() that is not
+compatible with the BeatMode interface. It represents a heart in a specific mode that
+beats.
+3. HeartAdapter Class: This class acts as the adapter. It takes an instance
+of HeartModel and delegates the beat() method call to the startBeating() method
+of HeartModel. This makes the HeartModel compatible with the BeatMode interface.
+4. HeartClient: This is the client code that uses the BeatMode interface without knowing
+the underlying implementation. It works with the HeartAdapter to interact with
+the HeartModel.
+
+
+
+
+Q.2 Run some python programs on Pi like a) Light an LED through Python program b) Get input
+from two switches and switch on corresponding LEDs c) Flash an LED at a given on time and
+off time cycle, where the two times are taken from a file
+Setup:
+Before running these programs, ensure you have:
+ The GPIO library installed. You can install it using:
+bash
+Copy code
+sudo apt-get install python3-rpi.gpio
+ Proper connections for LEDs and switches. You can use a breadboard to connect the
+GPIO pins to LEDs and switches, ensuring you know which GPIO pins are connected to
+them.
+a) Light an LED Through Python Program
+This program will turn on an LED connected to a GPIO pin (e.g., GPIO17) when the program
+runs.
+python
+Copy code
+import RPi.GPIO as GPIO
+import time
+# Set up GPIO
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+# Set GPIO pin 17 as output (LED pin)
+LED_PIN = 17
+GPIO.setup(LED_PIN, GPIO.OUT)
+# Turn on the LED
+GPIO.output(LED_PIN, GPIO.HIGH)
+print("LED is ON")
+# Wait for 5 seconds
+time.sleep(5)
+# Turn off the LED
+GPIO.output(LED_PIN, GPIO.LOW)
+print("LED is OFF")
+# Clean up GPIO settings
+GPIO.cleanup()
+Explanation:
+ This program uses GPIO pin 17 to control the LED.
+ It turns the LED on for 5 seconds, then turns it off.
+ The GPIO.cleanup() ensures that the GPIO settings are cleared when the program ends.
+b) Get Input from Two Switches and Switch On Corresponding LEDs
+This program will read input from two switches and turn on the corresponding LEDs based on
+the state of the switches.
+python
+Copy code
+import RPi.GPIO as GPIO
+import time
+# Set up GPIO
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+# Define GPIO pins for switches and LEDs
+SWITCH1_PIN = 18
+SWITCH2_PIN = 23
+LED1_PIN = 17
+LED2_PIN = 24
+# Set up the switches as inputs and LEDs as outputs
+GPIO.setup(SWITCH1_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(SWITCH2_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(LED1_PIN, GPIO.OUT)
+GPIO.setup(LED2_PIN, GPIO.OUT)
+try:
+ while True:
+ # Read switch states
+ switch1_state = GPIO.input(SWITCH1_PIN)
+ switch2_state = GPIO.input(SWITCH2_PIN)
+ # Control LEDs based on switch states
+ if switch1_state == GPIO.LOW: # Button pressed (active low)
+ GPIO.output(LED1_PIN, GPIO.HIGH)
+ else:
+ GPIO.output(LED1_PIN, GPIO.LOW)
+ if switch2_state == GPIO.LOW:
+ GPIO.output(LED2_PIN, GPIO.HIGH)
+ else:
+ GPIO.output(LED2_PIN, GPIO.LOW)
+ time.sleep(0.1) # Debounce delay
+except KeyboardInterrupt:
+ print("Program terminated")
+finally:
+ # Clean up GPIO settings
+ GPIO.cleanup()
+Explanation:
+ The program monitors two switches (connected to GPIO pins 18 and 23) and two LEDs
+(connected to GPIO pins 17 and 24).
+ If a switch is pressed (input is LOW), the corresponding LED will turn on. If the switch is
+not pressed (HIGH), the LED will turn off.
+ The program continues to monitor the switches in a loop, and a try-except block is used
+to cleanly handle the program termination (e.g., via Ctrl+C).
+c) Flash an LED at a Given On Time and Off Time Cycle, Where the Two Times
+Are Taken from a File
+This program will read on and off times from a file (e.g., times.txt) and flash an LED based on
+those times.
+Sample File (times.txt):
+Copy code
+2
+1
+This means the LED will stay on for 2 seconds and off for 1 second.
+python
+Copy code
+import RPi.GPIO as GPIO
+import time
+# Set up GPIO
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+# Set GPIO pin for the LED
+LED_PIN = 17
+GPIO.setup(LED_PIN, GPIO.OUT)
+# Read on and off times from a file
+try:
+ with open('times.txt', 'r') as file:
+ on_time = float(file.readline().strip()) # Read the 'on' time
+ off_time = float(file.readline().strip()) # Read the 'off' time
+except FileNotFoundError:
+ print("Error: times.txt file not found!")
+ GPIO.cleanup()
+ exit()
+# Flash the LED based on the times read from the file
+try:
+ while True:
+ GPIO.output(LED_PIN, GPIO.HIGH) # Turn on the LED
+ print(f"LED ON for {on_time} seconds")
+ time.sleep(on_time) # Wait for 'on' time
+ GPIO.output(LED_PIN, GPIO.LOW) # Turn off the LED
+ print(f"LED OFF for {off_time} seconds")
+ time.sleep(off_time) # Wait for 'off' time
+except KeyboardInterrupt:
+ print("Program terminated")
+finally:
+ GPIO.cleanup()

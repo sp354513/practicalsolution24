@@ -1,166 +1,111 @@
-Q.1) Write a program to sort n randomly generated elements using Heapsort method.
+Slip 2 :
+Q.1 Write a Java Program to implement Singleton pattern for multithreading
+// Singleton class with thread-safety in a multithreaded environment
+public class Singleton {
+// Declare the instance as volatile to ensure proper synchronization in a multithreaded
+environment
+private static volatile Singleton instance;
+// Private constructor to prevent instantiation
+private Singleton() {
+// Simulating time-consuming initialization, e.g., database connection setup, etc.
+try {
+Thread.sleep(100); // Simulate some delay in instance creation
+} catch (InterruptedException e) {
+e.printStackTrace();
+}
+}
+// Public method to provide access to the instance
+public static Singleton getInstance() {
+// First check (without locking)
+if (instance == null) {
+synchronized (Singleton.class) {
+// Second check (with locking)
+if (instance == null) {
+instance = new Singleton(); // Create the instance
+}
+}
+}
+return instance;
+}
+public void showMessage() {
+System.out.println("Hello, Singleton instance: " + this);
+}
+}
+// Thread class to test Singleton instance access in a multithreaded environment
+class SingletonTestThread extends Thread {
+@Override
+public void run() {
+Singleton singleton = Singleton.getInstance();
+singleton.showMessage();
+}
+}
+public class SingletonTest {
+public static void main(String[] args) {
+// Create multiple threads to test Singleton pattern in a multithreaded environment
+SingletonTestThread thread1 = new SingletonTestThread();
+SingletonTestThread thread2 = new SingletonTestThread();
+SingletonTestThread thread3 = new SingletonTestThread();
+SingletonTestThread thread4 = new SingletonTestThread();
+// Start the threads
+thread1.start();
+thread2.start();
+thread3.start();
+thread4.start();
+try {
+// Wait for all threads to complete
+thread1.join();
+thread2.join();
+thread3.join();
+thread4.join();
+} catch (InterruptedException e) {
+e.printStackTrace();
+}
+}
+}
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-void heapify(int arr[], int n, int i) {
- int largest = i; 
- int l = 2 * i + 1; 
- int r = 2 * i + 2; 
- if (l < n && arr[l] > arr[largest])
- largest = l;
- if (r < n && arr[r] > arr[largest])
- largest = r;
- if (largest != i) {
- int temp = arr[i];
- arr[i] = arr[largest];
- arr[largest] = temp;
- heapify(arr, n, largest);
- }
-}
-void heapSort(int arr[], int n) {
- for (int i = n / 2 - 1; i >= 0; i--)
- heapify(arr, n, i);
- for (int i = n - 1; i > 0; i--) {
- int temp = arr[0];
- arr[0] = arr[i];
- arr[i] = temp;
- heapify(arr, i, 0);
- }
-}
-int main() {
- int n;
- printf("Enter the number of elements: ");
- scanf("%d", &n);
- int *arr = (int *)malloc(n * sizeof(int));
- srand(time(NULL));
- printf("Randomly generated array: ");
- for (int i = 0; i < n; i++) {
- arr[i] = rand() % 100; 
- printf("%d ", arr[i]);
- }
- printf("\n");
- heapSort(arr, n);
- printf("Sorted array: ");
- for (int i = 0; i < n; i++) {
- printf("%d ", arr[i]);
- }
- printf("\n");
- free(arr);
- return 0;
-}
 
-Q.2) Write a program to implement Strassen’s Matrix multiplication
-
-#include <stdio.h>
-#include <stdlib.h>
-void strassen(int n, int A[][n], int B[][n], int C[][n]);
-void add(int n, int A[][n], int B[][n], int C[][n]);
-void subtract(int n, int A[][n], int B[][n], int C[][n]);
-void printMatrix(int n, int matrix[][n]);
-int main() {
- int n, i, j;
- printf("Enter the size of square matrices: ");
- scanf("%d", &n);
- int A[n][n], B[n][n], C[n][n];
- printf("Enter elements of matrix A:\n");
- for (i = 0; i < n; i++) {
- for (j = 0; j < n; j++) {
- scanf("%d", &A[i][j]);
- }
- }
- printf("Enter elements of matrix B:\n");
- for (i = 0; i < n; i++) {
- for (j = 0; j < n; j++) {
- scanf("%d", &B[i][j]);
- }
- }
- strassen(n, A, B, C);
- printf("Resultant Matrix C:\n");
- printMatrix(n, C);
- return 0;
+Q.2 Write a program to measure the distance using ultrasonic sensor and make LED blink using
+Arduino.
+// Define the pins for the ultrasonic sensor
+const int trigPin = 9;
+const int echoPin = 10;
+// Define the pin for the LED
+const int ledPin = 13;
+// Define variables for measuring distance
+long duration;
+int distance;
+void setup() {
+// Start the serial communication for debugging
+Serial.begin(9600);
+// Set the trigPin as an output and echoPin as an input
+pinMode(trigPin, OUTPUT);
+pinMode(echoPin, INPUT);
+// Set the LED pin as an output
+pinMode(ledPin, OUTPUT);
 }
-void strassen(int n, int A[][n], int B[][n], int C[][n]) {
- if (n == 1) {
- C[0][0] = A[0][0] * B[0][0];
- return;
- }
- int i, j;
- int newSize = n / 2;
- int A11[newSize][newSize], A12[newSize][newSize], A21[newSize][newSize], A22[newSize][newSize];
- int B11[newSize][newSize], B12[newSize][newSize], B21[newSize][newSize], B22[newSize][newSize];
- int C11[newSize][newSize], C12[newSize][newSize], C21[newSize][newSize], C22[newSize][newSize];
- int M1[newSize][newSize], M2[newSize][newSize], M3[newSize][newSize], M4[newSize][newSize], 
-M5[newSize][newSize], M6[newSize][newSize], M7[newSize][newSize];
- int temp1[newSize][newSize], temp2[newSize][newSize];
- for (i = 0; i < newSize; i++) {
- for (j = 0; j < newSize; j++) {
- A11[i][j] = A[i][j];
- A12[i][j] = A[i][j + newSize];
- A21[i][j] = A[i + newSize][j];
- A22[i][j] = A[i + newSize][j + newSize];
- B11[i][j] = B[i][j];
- B12[i][j] = B[i][j + newSize];
- B21[i][j] = B[i + newSize][j];
- B22[i][j] = B[i + newSize][j + newSize];
- }
- }
- add(newSize, A11, A22, temp1);
- add(newSize, B11, B22, temp2);
- strassen(newSize, temp1, temp2, M1);
- add(newSize, A21, A22, temp1);
- strassen(newSize, temp1, B11, M2);
- subtract(newSize, B12, B22, temp1);
- strassen(newSize, A11, temp1, M3);
- subtract(newSize, B21, B11, temp1);
- strassen(newSize, A22, temp1, M4);
- add(newSize, A11, A12, temp1);
- strassen(newSize, temp1, B22, M5);
- subtract(newSize, A21, A11, temp1);
- add(newSize, B11, B12, temp2);
- strassen(newSize, temp1, temp2, M6);
- subtract(newSize, A12, A22, temp1);
- add(newSize, B21, B22, temp2);
- strassen(newSize, temp1, temp2, M7);
- add(newSize, M1, M4, temp1);
- subtract(newSize, temp1, M5, temp2);
- add(newSize, temp2, M7, C11);
- add(newSize, M3, M5, C12);
- add(newSize, M2, M4, C21);
- add(newSize, M1, M3, temp1);
- subtract(newSize, temp1, M2, temp2);
- add(newSize, temp2, M6, C22);
- for (i = 0; i < newSize; i++) {
- for (j = 0; j < newSize; j++) {
- C[i][j] = C11[i][j];
- C[i][j + newSize] = C12[i][j];
- C[i + newSize][j] = C21[i][j];
- C[i + newSize][j + newSize] = C22[i][j];
- }
- }
+void loop() {
+// Send a pulse to trigger the ultrasonic sensor
+digitalWrite(trigPin, LOW);
+delayMicroseconds(2); // Wait for a brief moment to ensure a clean trigger
+digitalWrite(trigPin, HIGH);
+delayMicroseconds(10); // Send a 10-microsecond pulse to trigger the sensor
+digitalWrite(trigPin, LOW);
+// Measure the duration of the pulse from the echoPin
+duration = pulseIn(echoPin, HIGH); // Measure the time the pulse travels
+// Calculate the distance in centimeters (using speed of sound: 343 m/s)
+distance = duration * 0.0344 / 2; // Time * speed of sound / 2 (for round-trip)
+// Print the distance to the Serial Monitor
+Serial.print("Distance: ");
+Serial.print(distance);
+Serial.println(" cm");
+// Blink the LED if the distance is less than a threshold (e.g., 10 cm)
+if (distance < 10) {
+digitalWrite(ledPin, HIGH); // Turn the LED ON
+delay(500); // Wait for 500 milliseconds
+digitalWrite(ledPin, LOW); // Turn the LED OFF
+delay(500); // Wait for 500 milliseconds
+} else {
+digitalWrite(ledPin, LOW); // Ensure the LED is OFF if distance is greater than 10 cm
 }
-void add(int n, int A[][n], int B[][n], int C[][n]) {
- int i, j;
- for (i = 0; i < n; i++) {
- for (j = 0; j < n; j++) {
- C[i][j] = A[i][j] + B[i][j];
- }
- }
-}
-void subtract(int n, int A[][n], int B[][n], int C[][n]) {
- int i, j;
- for (i = 0; i < n; i++) {
- for (j = 0; j < n; j++) {
- C[i][j] = A[i][j] - B[i][j];
- }
- }
-}
-void printMatrix(int n, int matrix[][n]) {
- int i, j;
- for (i = 0; i < n; i++) {
- for (j = 0; j < n; j++) {
- printf("%d ", matrix[i][j]);
- }
- printf("\n");
- }
+delay(100); // Small delay before the next measurement
 }

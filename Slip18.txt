@@ -1,0 +1,140 @@
+Q.1 Write a JAVA Program to implement built-in support (java.util.Observable) Weather station
+with members temperature, humidity, pressure and methods mesurmentsChanged(),
+setMesurment(), getTemperature(), getHumidity(), getPressure()
+Weather Station Implementation:
+1. WeatherStation (Observable)
+java
+Copy code
+import java.util.Observable;
+public class WeatherStation extends Observable {
+ private float temperature;
+ private float humidity;
+ private float pressure;
+ // Constructor
+ public WeatherStation() {}
+ // Set the measurements and notify observers
+ public void setMeasurements(float temperature, float humidity, float
+pressure) {
+ this.temperature = temperature;
+ this.humidity = humidity;
+ this.pressure = pressure;
+ measurementsChanged(); // Notify observers
+ }
+ // Notify observers that measurements have changed
+ private void measurementsChanged() {
+ setChanged(); // Marks the Observable as changed
+ notifyObservers(); // Notifies all observers
+ }
+ // Getters for the measurements
+ public float getTemperature() {
+ return temperature;
+ }
+ public float getHumidity() {
+ return humidity;
+ }
+ public float getPressure() {
+ return pressure;
+ }
+}
+2. WeatherDisplay (Observer)
+Now, let's create an observer class WeatherDisplay that will observe
+the WeatherStation object for changes in temperature, humidity, and pressure.
+java
+Copy code
+import java.util.Observer;
+import java.util.Observable;
+public class WeatherDisplay implements Observer {
+ private float temperature;
+ private float humidity;
+ private float pressure;
+ public WeatherDisplay(Observable weatherStation) {
+ weatherStation.addObserver(this); // Register this object as an
+observer
+ }
+ // This method will be called whenever the observable object notifies its
+observers
+ @Override
+ public void update(Observable observable, Object arg) {
+ if (observable instanceof WeatherStation) {
+ WeatherStation weatherStation = (WeatherStation) observable;
+ this.temperature = weatherStation.getTemperature();
+ this.humidity = weatherStation.getHumidity();
+ this.pressure = weatherStation.getPressure();
+ display(); // Display updated values
+ }
+ }
+ // Display the weather information
+ public void display() {
+ System.out.println("Weather Update: ");
+ System.out.println("Temperature: " + temperature + "°C");
+ System.out.println("Humidity: " + humidity + "%");
+ System.out.println("Pressure: " + pressure + " hPa");
+ System.out.println("---------------------------");
+ }
+}
+3. Main Program (Test the WeatherStation and WeatherDisplay)
+java
+Copy code
+public class WeatherStationApp {
+ public static void main(String[] args) {
+ // Create a WeatherStation object
+ WeatherStation weatherStation = new WeatherStation();
+ // Create a WeatherDisplay object (Observer)
+ WeatherDisplay weatherDisplay = new WeatherDisplay(weatherStation);
+ // Set measurements and notify the observers
+ System.out.println("Setting measurements to: ");
+ weatherStation.setMeasurements(30.5f, 65.0f, 1013.0f);
+ // Set new measurements and notify again
+ System.out.println("Setting new measurements to: ");
+ weatherStation.setMeasurements(25.0f, 70.0f, 1010.0f);
+ }
+}
+Explanation:
+1. WeatherStation Class:
+o Inherits from Observable.
+o Contains private fields for temperature, humidity, and pressure.
+o Provides the setMeasurements() method to set values for these fields and then
+call measurementsChanged() to notify observers.
+o The measurementsChanged() method marks the object as changed and notifies
+all observers by calling notifyObservers().
+2. WeatherDisplay Class:
+o Implements the Observer interface.
+o When the observable (WeatherStation) calls notifyObservers(),
+the update() method is triggered in this class.
+o The update() method retrieves the new measurements from
+the WeatherStation object and calls display() to show the updated values.
+3. Main Program (WeatherStationApp):
+o Creates a WeatherStation object and a WeatherDisplay object.
+o Sets measurements on the WeatherStation, which triggers the update() method
+in the WeatherDisplay, displaying the updated weather information.
+
+
+
+
+
+Q.2 Write a program for LDR to vary the light intensity of LED using Arduino.
+// Pin Definitions
+int ldrPin = A0; // LDR connected to Analog pin A0
+int ledPin = 9; // LED connected to PWM pin 9
+void setup() {
+ pinMode(ledPin, OUTPUT); // Set the LED pin as an output
+ Serial.begin(9600); // Start serial communication to monitor LDR values
+}
+void loop() {
+ // Read the value from the LDR (light intensity)
+ int ldrValue = analogRead(ldrPin);
+
+ // Map the LDR value (0 to 1023) to PWM range (0 to 255)
+ int brightness = map(ldrValue, 0, 1023, 0, 255);
+
+ // Set the brightness of the LED based on the LDR value
+ analogWrite(ledPin, brightness);
+
+ // Print the LDR value and brightness to the Serial Monitor
+ Serial.print("LDR Value: ");
+ Serial.print(ldrValue);
+ Serial.print(" -> LED Brightness: ");
+ Serial.println(brightness);
+ // Add a small delay to avoid excessive serial printing
+ delay(100);
+}

@@ -1,97 +1,164 @@
-Q.1) Write a program to implement solve ‘N’ Queens Problem using Backtracking.
+Q.1 Write a Java Program to implement Abstract Factory Pattern for Shape interface.
+Code Implementation:
+1. Shape Interface
+java
+Copy code
+// Abstract Product: Shape interface
+public interface Shape {
+ void draw();
+}
+2. Concrete Products (Circle, Square, Rectangle)
+java
+Copy code
+// Concrete Product: Circle
+public class Circle implements Shape {
+ @Override
+ public void draw() {
+ System.out.println("Drawing a Circle");
+ }
+}
+// Concrete Product: Square
+public class Square implements Shape {
+ @Override
+ public void draw() {
+ System.out.println("Drawing a Square");
+ }
+}
+// Concrete Product: Rectangle
+public class Rectangle implements Shape {
+ @Override
+ public void draw() {
+ System.out.println("Drawing a Rectangle");
+ }
+}
+3. Abstract Factory
+java
+Copy code
+// Abstract Factory: ShapeFactory
+public interface ShapeFactory {
+ Shape createShape(String shapeType);
+}
+4. Concrete Factories (2D and 3D)
+java
+Copy code
+// Concrete Factory: 2DShapeFactory
+public class TwoDShapeFactory implements ShapeFactory {
+ @Override
+ public Shape createShape(String shapeType) {
+ if (shapeType.equalsIgnoreCase("CIRCLE")) {
+ return new Circle();
+ } else if (shapeType.equalsIgnoreCase("SQUARE")) {
+ return new Square();
+ } else if (shapeType.equalsIgnoreCase("RECTANGLE")) {
+ return new Rectangle();
+ }
+ return null;
+ }
+}
+// Concrete Factory: 3DShapeFactory (can create 3D shapes like Sphere,
+Cuboid, etc.)
+public class ThreeDShapeFactory implements ShapeFactory {
+ // In this example, we are assuming that 3D shapes like Sphere and Cuboid
+could be created
+ // But for simplicity, we will keep it similar to 2D factory structure.
+ @Override
+ public Shape createShape(String shapeType) {
+ if (shapeType.equalsIgnoreCase("SPHERE")) {
+ // Return a 3D shape like Sphere (for now, it's a placeholder).
+ return new Circle(); // Just using Circle here as an example of
+a 3D object.
+ } else if (shapeType.equalsIgnoreCase("CUBOID")) {
+ // Return a 3D shape like Cuboid (for now, it's a placeholder).
+ return new Square(); // Just using Square here as an example of
+a 3D object.
+ }
+ return null;
+ }
+}
+5. Client Code
+java
+Copy code
+public class AbstractFactoryPatternDemo {
+ public static void main(String[] args) {
+ // Create 2D Shape Factory
+ ShapeFactory shapeFactory2D = new TwoDShapeFactory();
 
-#include <stdio.h>
-#include <stdbool.h>
-#define N 8
-int board[N][N];
-void printSolution() {
- for (int i = 0; i < N; i++) {
- for (int j = 0; j < N; j++) {
- printf("%2d ", board[i][j]);
+ // Create shapes using the 2D Shape Factory
+ Shape shape1 = shapeFactory2D.createShape("CIRCLE");
+ shape1.draw();
+
+ Shape shape2 = shapeFactory2D.createShape("SQUARE");
+ shape2.draw();
+
+ Shape shape3 = shapeFactory2D.createShape("RECTANGLE");
+ shape3.draw();
+
+ // Create 3D Shape Factory
+ ShapeFactory shapeFactory3D = new ThreeDShapeFactory();
+
+ // Create shapes using the 3D Shape Factory
+ Shape shape4 = shapeFactory3D.createShape("SPHERE");
+ shape4.draw();
+
+ Shape shape5 = shapeFactory3D.createShape("CUBOID");
+ shape5.draw();
  }
- printf("\n");
- }
-}
-bool isSafe(int row, int col) {
- for (int i = 0; i < col; i++) {
- if (board[row][i] == 1) {
- return false;
- }
- }
- for (int i = row, j = col; i >= 0 && j >= 0; i--, j--) {
- if (board[i][j] == 1) {
- return false;
- }
- }
- for (int i = row, j = col; i < N && j >= 0; i++, j--) {
- if (board[i][j] == 1) {
- return false;
- }
- }
- return true;
-}
-bool solveNQueensUtil(int col) {
- if (col >= N) {
- return true; 
- }
- for (int i = 0; i < N; i++) {
- if (isSafe(i, col)) {
- board[i][col] = 1;
- if (solveNQueensUtil(col + 1)) {
- return true;
- }
- board[i][col] = 0; 
- }
- }
- return false; 
-}
-bool solveNQueens() {
- if (!solveNQueensUtil(0)) {
- printf("Solution does not exist.\n");
- return false;
- }
- printf("Solution for N-Queens problem:\n");
- printSolution();
- return true;
-}
-int main() {
- if (N <= 3) {
- printf("No solution exists for N less than or equal to 3.\n");
- return 1;
- }
- solveNQueens();
- return 0;
 }
 
-Q.2) Write a program to find out solution for 0/1 knapsack problem. 
 
-#include <stdio.h>
-#define MAX_ITEMS 100
-#define MAX_WEIGHT 100
-int max(int a, int b) {
- return (a > b) ? a : b;
+
+
+
+Q.2 Write a program to get temperature notification using Arduino.
+#include <DHT.h>
+// Define the pin connected to the DHT sensor
+#define DHTPIN 2 // Pin where the DHT sensor data pin is connected
+// Define the sensor type (DHT11 or DHT22)
+#define DHTTYPE DHT11 // Use DHT11 or DHT22 depending on your sensor
+// Initialize the DHT sensor
+DHT dht(DHTPIN, DHTTYPE);
+void setup() {
+// Start the serial communication
+Serial.begin(9600);
+
+// Initialize the DHT sensor
+dht.begin();
+
+Serial.println("Temperature Notification System Initialized");
 }
-int knapsack(int values[], int weights[], int n, int capacity) {
- int dp[MAX_ITEMS + 1][MAX_WEIGHT + 1];
- for (int i = 0; i <= n; i++) {
- for (int w = 0; w <= capacity; w++) {
- if (i == 0 || w == 0) {
- dp[i][w] = 0;
- } else if (weights[i - 1] <= w) {
- dp[i][w] = max(values[i - 1] + dp[i - 1][w - weights[i - 1]], dp[i - 1][w]);
- } else {
- dp[i][w] = dp[i - 1][w];
- }
- }
- }
- return dp[n][capacity];
+void loop() {
+// Wait a few seconds between measurements
+delay(2000);
+
+// Read the temperature in Celsius
+float tempC = dht.readTemperature();
+
+// Check if the reading failed and exit early
+if (isnan(tempC)) {
+Serial.println("Failed to read from DHT sensor!");
+return;
 }
-int main() {
- int values[] = {60, 100, 120};
- int weights[] = {10, 20, 30};
- int n = sizeof(values) / sizeof(values[0]);
- int capacity = 50;
- int result = knapsack(values, weights, n, capacity);
- printf("Maximum value in knapsack = %d\n", result);
- return 0;
+// Print the temperature to the Serial Monitor
+Serial.print("Current Temperature: ");
+Serial.print(tempC);
+Serial.println("°C");
+// If temperature is higher than a certain threshold, send notification
+if (tempC > 30.0) {
+Serial.println("Temperature is too high! Sending notification...");
+sendTemperatureNotification(tempC);
+} else if (tempC < 10.0) {
+Serial.println("Temperature is too low! Sending notification...");
+sendTemperatureNotification(tempC);
+}
+
+// Delay to prevent continuous checking
+delay(1000);
+}
+void sendTemperatureNotification(float temperature) {
+// Simulating sending a notification (you can integrate with email/SMS here)
+Serial.print("Notification: ");
+Serial.print("Temperature Alert! Current Temperature is ");
+Serial.print(temperature);
+Serial.println("°C");
+// You can integrate with services like IFTTT, email, or SMS here
 }

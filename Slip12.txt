@@ -1,112 +1,140 @@
-Q.1) Write a program to implement BFS (Breadth First Search) and determine the time 
-complexity for the same.
+Q.1 Write a Java Program to implement Decorator Pattern for interface Car to define the
+assemble() method and then decorate it to Sports car and Luxury Car
+Step-by-Step Solution:
+Step 1: Define the Car Interface
+This interface will have a single method assemble().
+java
+Copy code
+public interface Car {
+ void assemble();
+}
+Step 2: Concrete Implementation of Car — Basic Car
+java
+Copy code
+public class BasicCar implements Car {
+ @Override
+ public void assemble() {
+ System.out.println("Basic Car.");
+ }
+}
+Step 3: Decorator Class — CarDecorator
+This will be a base class for all decorators. It implements the Car interface and wraps
+a Car object.
+java
+Copy code
+public class CarDecorator implements Car {
+ protected Car decoratedCar;
+ public CarDecorator(Car car) {
+ this.decoratedCar = car;
+ }
+ @Override
+ public void assemble() {
+ this.decoratedCar.assemble();
+ }
+}
+Step 4: SportsCar Decorator
+This decorator class will add additional features specific to a sports car.
+java
+Copy code
+public class SportsCar extends CarDecorator {
+ public SportsCar(Car car) {
+ super(car);
+ }
+ @Override
+ public void assemble() {
+ super.assemble(); // Call the base assemble method
+ System.out.println("Adding features of Sports Car.");
+ }
+}
+Step 5: LuxuryCar Decorator
+This decorator class will add additional features specific to a luxury car.
+java
+Copy code
+public class LuxuryCar extends CarDecorator {
+ public LuxuryCar(Car car) {
+ super(car);
+ }
+ @Override
+ public void assemble() {
+ super.assemble(); // Call the base assemble method
+ System.out.println("Adding features of Luxury Car.");
+ }
+}
+Step 6: Client Code — Testing the Decorator Pattern
+The client will create a basic car and then dynamically decorate it with different features.
+java
+Copy code
+public class DecoratorPatternTest {
+ public static void main(String[] args) {
+ // Create a basic car
+ Car sportsCar = new SportsCar(new BasicCar());
+ sportsCar.assemble();
+ System.out.println("\n*****");
+ // Create a luxury sports car
+ Car sportsLuxuryCar = new LuxuryCar(new SportsCar(new BasicCar()));
+ sportsLuxuryCar.assemble();
+ }
+}
 
-#include <stdio.h>
-#include <stdlib.h>
-#define MAX_VERTICES 100
-struct Node {
- int data;
- struct Node* next;
-};
-struct Graph {
- int numVertices;
- struct Node** adjLists;
- int* visited;
-};
-struct Node* createNode(int data) {
- struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
- newNode->data = data;
- newNode->next = NULL;
- return newNode;
-}
-struct Graph* createGraph(int numVertices) {
- struct Graph* graph = (struct Graph*)malloc(sizeof(struct Graph));
- graph->numVertices = numVertices;
- graph->adjLists = (struct Node**)malloc(numVertices * sizeof(struct Node*));
- graph->visited = (int*)malloc(numVertices * sizeof(int));
- for (int i = 0; i < numVertices; i++) {
- graph->adjLists[i] = NULL;
- graph->visited[i] = 0;
- }
- return graph;
-}
-void addEdge(struct Graph* graph, int src, int dest) {
- struct Node* newNode = createNode(dest);
- newNode->next = graph->adjLists[src];
- graph->adjLists[src] = newNode;
- newNode = createNode(src);
- newNode->next = graph->adjLists[dest];
- graph->adjLists[dest] = newNode;
-}
-void BFS(struct Graph* graph, int startVertex) {
- int queue[MAX_VERTICES];
- int front = 0, rear = 0;
- graph->visited[startVertex] = 1;
- queue[rear++] = startVertex;
- while (front < rear) {
- int currentVertex = queue[front++];
- printf("Visited %d \n", currentVertex);
- struct Node* temp = graph->adjLists[currentVertex];
- while (temp) {
- int adjVertex = temp->data;
- if (graph->visited[adjVertex] == 0) {
- graph->visited[adjVertex] = 1;
- queue[rear++] = adjVertex;
- }
- temp = temp->next;
- }
- }
-}
-int main() {
- struct Graph* graph = createGraph(5);
- addEdge(graph, 0, 1);
- addEdge(graph, 0, 2);
- addEdge(graph, 1, 3);
- addEdge(graph, 1, 4);
- printf("Breadth-First Search starting from vertex 0: \n");
- BFS(graph, 0); return 0;
-}
 
 
-Q.2) Write a program to sort a given set of elements using the Selection sort method and
-determine the time required to sort the elements.
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-void selectionSort(int arr[], int n) {
- int i, j, minIndex, temp;
- for (i = 0; i < n - 1; i++) {
- minIndex = i;
- for (j = i + 1; j < n; j++) {
- if (arr[j] < arr[minIndex]) {
- minIndex = j;
+
+Q.2 Write a program to sense the available networks using Arduino [15 M]
+#include <ESP8266WiFi.h> // Include the ESP8266 Wi-Fi library
+void setup() {
+ // Start the Serial communication at 115200 baud rate
+ Serial.begin(115200);
+ // Connect to Wi-Fi (not necessary for scanning, but useful for testing)
+ // WiFi.begin("your-SSID", "your-password");
+
+ // Print a message to the Serial Monitor
+ Serial.println("Scanning for Wi-Fi networks...");
+ // Start the Wi-Fi scan
+ int numberOfNetworks = WiFi.scanNetworks(); // Returns the number of
+networks found
+ // Check if any networks were found
+ if (numberOfNetworks == 0) {
+ Serial.println("No networks found.");
+ } else {
+ Serial.print(numberOfNetworks);
+ Serial.println(" networks found:");
  }
+ // Loop through all the networks and print their details
+ for (int i = 0; i < numberOfNetworks; i++) {
+ // Print network SSID
+ Serial.print(i + 1);
+ Serial.print(": ");
+ Serial.print(WiFi.SSID(i));
+ // Print signal strength in dBm
+ Serial.print(" Signal Strength (RSSI): ");
+ Serial.print(WiFi.RSSI(i));
+ Serial.println(" dBm");
+ // Print encryption type (Security)
+ Serial.print(" Encryption: ");
+ switch (WiFi.encryptionType(i)) {
+ case WIFI_AUTH_OPEN:
+ Serial.println("Open");
+ break;
+ case WIFI_AUTH_WEP:
+ Serial.println("WEP");
+ break;
+ case WIFI_AUTH_WPA_PSK:
+ Serial.println("WPA-PSK");
+ break;
+ case WIFI_AUTH_WPA2_PSK:
+ Serial.println("WPA2-PSK");
+ break;
+ case WIFI_AUTH_WPA_WPA2_PSK:
+ Serial.println("WPA/WPA2-PSK");
+ break;
+ default:
+ Serial.println("Unknown");
+ break;
  }
- temp = arr[minIndex];
- arr[minIndex] = arr[i];
- arr[i] = temp;
+ Serial.println(); // Print a newline for separation between networks
  }
 }
-int main() {
- int n;
- printf("Enter the number of elements: ");
- scanf("%d", &n);
- int arr[n];
- printf("Enter %d elements:\n", n);
- for (int i = 0; i < n; i++) {
- scanf("%d", &arr[i]);
- }
- clock_t start, end;
- double cpu_time_used;
- start = clock();
- selectionSort(arr, n);
- end = clock();
- cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
- printf("Sorted elements: ");
- for (int i = 0; i < n; i++) {
- printf("%d ", arr[i]);
- }
- printf("\nTime taken: %f seconds\n", cpu_time_used);
- return 0;
+void loop() {
+ // The loop doesn't do anything in this case
 }

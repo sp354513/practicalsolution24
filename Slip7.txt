@@ -1,123 +1,235 @@
-Q-1) Write a program for the Implementation of Dijkstra’s algorithm to find shortest path to
-other vertices
-
-#include <stdio.h>
-#include <limits.h>
-#define V 9
-int minDistance(int dist[], int sptSet[]) {
- int min = INT_MAX, min_index;
- for (int v = 0; v < V; v++)
- if (sptSet[v] == 0 && dist[v] <= min)
- min = dist[v], min_index = v;
- return min_index;
+Q.1 Write a Java Program to implement undo command to test Ceiling fan. [15 M]
+Steps
+1. Define a Command interface with execute() and undo() methods.
+2. Create a CeilingFan receiver class that has various speed settings and an off state.
+3. Implement concrete command classes
+(CeilingFanLowCommand, CeilingFanMediumCommand, CeilingFanHighCommand, Ceil
+ingFanOffCommand) to set different fan speeds.
+4. Each command will store the previous speed of the fan, allowing the undo method to
+revert to the previous state.
+5. Test the functionality by changing fan speeds and using the undo feature.
+Code Implementation
+Step 1: Command Interface
+java
+Copy code
+// Command interface
+interface Command {
+ void execute();
+ void undo();
 }
-void printSolution(int dist[]) {
- printf("Vertex \t Distance from Source\n");
- for (int i = 0; i < V; i++)
- printf("%d \t %d\n", i, dist[i]);
-}
-void dijkstra(int graph[V][V], int src) {
- int dist[V]; 
- int sptSet[V]; 
-from src to i is finalized
- 
- for (int i = 0; i < V; i++)
- dist[i] = INT_MAX, sptSet[i] = 0;
- 
- dist[src] = 0;
- 
- for (int count = 0; count < V - 1; count++) {
- int u = minDistance(dist, sptSet);
- 
- sptSet[u] = 1;
- 
- for (int v = 0; v < V; v++)
-from src to v through u is smaller than current value of dist[v]
- if (!sptSet[v] && graph[u][v] && dist[u] != INT_MAX && dist[u] + graph[u][v] < dist[v])
- dist[v] = dist[u] + graph[u][v];
+Step 2: CeilingFan Receiver Class
+The CeilingFan class will have methods to set different speeds and a variable to keep track of
+its current speed.
+java
+Copy code
+// Receiver class: CeilingFan
+class CeilingFan {
+ public static final int HIGH = 3;
+ public static final int MEDIUM = 2;
+ public static final int LOW = 1;
+ public static final int OFF = 0;
+ private int speed;
+ public CeilingFan() {
+ speed = OFF;
  }
- 
- printSolution(dist);
+ public void high() {
+ speed = HIGH;
+ System.out.println("Ceiling fan is on high");
+ }
+ public void medium() {
+ speed = MEDIUM;
+ System.out.println("Ceiling fan is on medium");
+ }
+ public void low() {
+ speed = LOW;
+ System.out.println("Ceiling fan is on low");
+ }
+ public void off() {
+ speed = OFF;
+ System.out.println("Ceiling fan is off");
+ }
+ public int getSpeed() {
+ return speed;
+ }
 }
-int main() {
- int graph[V][V] = {
- {0, 4, 0, 0, 0, 0, 0, 8, 0},
- {4, 0, 8, 0, 0, 0, 0, 11, 0},
- {0, 8, 0, 7, 0, 4, 0, 0, 2},
- {0, 0, 7, 0, 9, 14, 0, 0, 0},
- {0, 0, 0, 9, 0, 10, 0, 0, 0},
- {0, 0, 4, 14, 10, 0, 2, 0, 0},
- {0, 0, 0, 0, 0, 2, 0, 1, 6},
- {8, 11, 0, 0, 0, 0, 1, 0, 7},
- {0, 0, 2, 0, 0, 0, 6, 7, 0}
- };
- 
- dijkstra(graph, 0); 
- 
- return 0;
+Step 3: Concrete Command Classes
+Each command class sets a specific speed for the fan and stores the previous speed so that it can
+be reverted with undo().
+java
+Copy code
+// Command to set ceiling fan to high
+class CeilingFanHighCommand implements Command {
+ private CeilingFan ceilingFan;
+ private int prevSpeed;
+ public CeilingFanHighCommand(CeilingFan ceilingFan) {
+ this.ceilingFan = ceilingFan;
+ }
+ @Override
+ public void execute() {
+ prevSpeed = ceilingFan.getSpeed();
+ ceilingFan.high();
+ }
+ @Override
+ public void undo() {
+ setPreviousSpeed();
+ }
+ private void setPreviousSpeed() {
+ if (prevSpeed == CeilingFan.HIGH) ceilingFan.high();
+ else if (prevSpeed == CeilingFan.MEDIUM) ceilingFan.medium();
+ else if (prevSpeed == CeilingFan.LOW) ceilingFan.low();
+ else ceilingFan.off();
+ }
 }
+// Command to set ceiling fan to medium
+class CeilingFanMediumCommand implements Command {
+ private CeilingFan ceilingFan;
+ private int prevSpeed;
+ public CeilingFanMediumCommand(CeilingFan ceilingFan) {
+ this.ceilingFan = ceilingFan;
+ }
+ @Override
+ public void execute() {
+ prevSpeed = ceilingFan.getSpeed();
+ ceilingFan.medium();
+ }
+ @Override
+ public void undo() {
+ setPreviousSpeed();
+ }
+ private void setPreviousSpeed() {
+ if (prevSpeed == CeilingFan.HIGH) ceilingFan.high();
+ else if (prevSpeed == CeilingFan.MEDIUM) ceilingFan.medium();
+ else if (prevSpeed == CeilingFan.LOW) ceilingFan.low();
+ else ceilingFan.off();
+ }
+}
+// Command to set ceiling fan to low
+class CeilingFanLowCommand implements Command {
+ private CeilingFan ceilingFan;
+ private int prevSpeed;
+ public CeilingFanLowCommand(CeilingFan ceilingFan) {
+ this.ceilingFan = ceilingFan;
+ }
+ @Override
+ public void execute() {
+ prevSpeed = ceilingFan.getSpeed();
+ ceilingFan.low();
+ }
+ @Override
+ public void undo() {
+ setPreviousSpeed();
+ }
+ private void setPreviousSpeed() {
+ if (prevSpeed == CeilingFan.HIGH) ceilingFan.high();
+ else if (prevSpeed == CeilingFan.MEDIUM) ceilingFan.medium();
+ else if (prevSpeed == CeilingFan.LOW) ceilingFan.low();
+ else ceilingFan.off();
+ }
+}
+// Command to turn off the ceiling fan
+class CeilingFanOffCommand implements Command {
+ private CeilingFan ceilingFan;
+ private int prevSpeed;
+ public CeilingFanOffCommand(CeilingFan ceilingFan) {
+ this.ceilingFan = ceilingFan;
+ }
+ @Override
+ public void execute() {
+ prevSpeed = ceilingFan.getSpeed();
+ ceilingFan.off();
+ }
+ @Override
+ public void undo() {
+ setPreviousSpeed();
+ }
+ private void setPreviousSpeed() {
+ if (prevSpeed == CeilingFan.HIGH) ceilingFan.high();
+ else if (prevSpeed == CeilingFan.MEDIUM) ceilingFan.medium();
+ else if (prevSpeed == CeilingFan.LOW) ceilingFan.low();
+ else ceilingFan.off();
+ }
+}
+Step 4: Remote Control (Invoker) Class with Undo Functionality
+java
+Copy code
+// RemoteControl class to invoke commands
+class RemoteControl {
+ private Command slot;
+ private Command lastCommand;
+ public void setCommand(Command command) {
+ slot = command;
+ }
+ public void pressButton() {
+ slot.execute();
+ lastCommand = slot;
+ }
+ public void pressUndo() {
+ if (lastCommand != null) {
+ lastCommand.undo();
+ }
+ }
+}
+Step 5: Testing the Ceiling Fan with Undo Functionality
+java
+Copy code
+public class CeilingFanTest {
+ public static void main(String[] args) {
+ RemoteControl remote = new RemoteControl();
+ CeilingFan ceilingFan = new CeilingFan();
+ // Create commands for different speeds and off state
+ Command ceilingFanHigh = new CeilingFanHighCommand(ceilingFan);
+ Command ceilingFanMedium = new CeilingFanMediumCommand(ceilingFan);
+ Command ceilingFanLow = new CeilingFanLowCommand(ceilingFan);
+ Command ceilingFanOff = new CeilingFanOffCommand(ceilingFan);
+ // Test turning fan to high and undoing
+ remote.setCommand(ceilingFanHigh);
+ remote.pressButton();
+ remote.pressUndo();
+ // Test turning fan to medium and undoing
+ remote.setCommand(ceilingFanMedium);
+ remote.pressButton();
+ remote.pressUndo();
+ // Test turning fan to low and undoing
+ remote.setCommand(ceilingFanLow);
+ remote.pressButton();
+ remote.pressUndo();
+ // Test turning fan off and undoing
+ remote.setCommand(ceilingFanOff);
+ remote.pressButton();
+ remote.pressUndo();
+ }
+}
+Explanation
+1. Command Interface: Each command has an execute and an undo method.
+2. Concrete Commands: Commands store the previous speed before executing a new one,
+allowing them to revert with undo().
+3. RemoteControl (Invoker): Tracks the last executed command and calls undo() on it
+when the undo button is pressed.
+4. Testing: This program will print each fan speed change, and when undo() is called, it
+will revert to the previous speed.
 
-Q.2) Write a program for finding Topological sorting for Directed Acyclic Graph (DAG)
 
-#include<stdio.h>
-int main()
-{
-	int i,j,k,n,a[5][5], in[5],flag[5],c=0;
-	printf("\nHow many vertices: ");
-  scanf("%d",&n);
-  for(i=0;i<n; i++)
-  {
-    for(j=0;j<n; j++)
-    {
-	a[i][j]=0;
-	if(i!=j)
-	{
-		
-		printf("\n enter if  there edge is bet %d & %d =",i,j);
-        scanf("%d",&a[i][j]);	
-	}
-	}
-  }
-	printf("\n The Adjacency Matrix is : \n");
-	for(i=0;i<n; i++)
-	{
-    for(j=0;j<n; j++)
-    {
-      printf("%d\t",a[i][j]);
-    }
-    printf("\n");
-	}
-	for(i=0;i<n; i++)
-	{
-		in[i]=0;
-		flag[i]=0;
-	}
-	for(i=0; i<n; i++)
-	{
-    for(j=0; j<n; j++)
-    {
-      in[i]=in[i]+a[j][i];
-    }
-	}
-	printf("\n The Topological order is \n");
-	while (c<n)
-	{
-		for(k=0; k<n; k++)
-		{
-			if((in[k]==0)  &&  (flag[k]==0))
-			{
-				printf("v%d",k+1);
-				flag[k]=1;
-	      	
-	     	}
-		
-	     
-		for(i=0; i<n; i++)
-		{
-		if(a[k][i]==1)
-		in[i]--;
-		}
-		c++;
-	}
+
+
+Q.2 Write a program for LDR to vary the light intensity of LED using Arduino
+// Define the pins
+const int ldrPin = A0; // Analog pin connected to the LDR
+const int ledPin = 9; // PWM pin connected to the LED
+void setup() {
+Serial.begin(9600); // Start serial communication for debugging
+pinMode(ledPin, OUTPUT); // Set LED pin as output
 }
+void loop() {
+// Read the analog value from the LDR
+int ldrValue = analogRead(ldrPin);
+// Map the LDR value (0-1023) to PWM range (0-255)
+int ledBrightness = map(ldrValue, 0, 1023, 0, 255);
+// Set the brightness of the LED
+analogWrite(ledPin, ledBrightness);
+// Print values to Serial Monitor for debugging
+Serial.print("LDR Value: ");
+Serial.print(ldrValue);
+Serial.print(" -> LED Brightness: ");
+Serial.println(ledBrightness);
+delay(100); // Small delay for stability
 }

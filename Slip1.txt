@@ -1,105 +1,70 @@
-Q.1) Write a program to sort a list of n numbers in ascending order using selection sort and 
-determine the time required to sort the elements. 
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-void selectionSort(int arr[], int n) {
- int i, j, minIndex, temp;
- for (i = 0; i < n - 1; i++) {
- minIndex = i;
- for (j = i + 1; j < n; j++) {
- if (arr[j] < arr[minIndex]) {
- minIndex = j;
- }
- }
- temp = arr[minIndex];
- arr[minIndex] = arr[i];
- arr[i] = temp;
- }
+Q.1 Write a Java Program to implement I/O Decorator for converting uppercase letters to lower
+case letters
+package hello;
+public interface ToLowerDecorator {
+public void lower(String ch);
 }
-int main() {
- int n;
- printf("Enter the number of elements: ");
- scanf("%d", &n);
- int arr[n];
- printf("Enter %d elements:\n", n);
- for (int i = 0; i < n; i++) {
- scanf("%d", &arr[i]);
- }
- clock_t start, end;
- double cpu_time_used;
- start = clock();
- selectionSort(arr, n);
- end = clock();
- cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
- printf("Sorted elements: ");
- for (int i = 0; i < n; i++) {
- printf("%d ", arr[i]);
- }
- printf("\nTime taken: %f seconds\n", cpu_time_used);
- return 0;
+package hello;
+importjava.lang.*;
+import java.io.*;
+public class LowerCase implements ToLowerDecorator{
+public void lower(String ch)
+{
+ch=ch.toLowerCase();
+System.out.println("Lowercase:"+ch);
+}
+}
+package hello;
+import java.io.*;
+import java.util.Scanner;
+public class main {
+public static void main(String[] args)
+{
+ToLowerDecoratorl=newLowerCase();
+Scanner sc=new Scanner(System.in);
+System.out.println("enterch:");
+String s= sc.nextLine();
+System.out.println("entered ch:"+s);
+l.lower(s);
+}
 }
 
 
-Q.2) Write a program to sort a given set of elements using the Quick sort method and determine 
-the time required to sort the elements. Repeat the experiment for different values of n, the 
-number of elements in the list to be sorted. The elements can be read from a file or can be 
-generated using the random number generator.
 
-#include<stdio.h>
-int partition(int a[],int low,int high)
-{
-int i,j,pivot,temp;
-i=low+1;
-j=high;
-pivot=a[low];
-do{
-while(a[i]<pivot)
-{
-i++;
-}
-while(a[j]>pivot)
-{
-j--;
-}
-if(i<j)
-{
-temp=a[i];
-a[i]=a[j];
-a[j]=temp;
-}
-}
-while(i<j);
-temp=a[low];
-a[low]=a[j];
-a[j]=pivot;
-return j;
-}
-int quicksort(int a[],int low,int high)
-{
-int k;
-if(low<high)
-{
-k= partition(a,low,high);
-quicksort(a,low, k-1);
-quicksort(a, k+1,high);
+Q.2 Write a program to sense the available networks using Arduino
+#include <WiFi.h> // For ESP32. For ESP8266, use <ESP8266WiFi.h>
+void setup() {
+// Start the serial communication to see the output
+Serial.begin(115200);
+
+// Connect to Wi-Fi (no credentials needed for scanning)
+WiFi.mode(WIFI_STA); // Set the Wi-Fi mode to station (client)
+Serial.println("Scanning for Wi-Fi networks...");
+
+// Start the scan for Wi-Fi networks
+int networkCount = WiFi.scanNetworks(); // This function returns the number of networks
+found
+
+Serial.println("Scan complete.");
+
+// If networks were found, print the list
+if (networkCount == 0) {
+Serial.println("No networks found.");
+} else {
+Serial.print(networkCount);
+Serial.println(" networks found:");
+for (int i = 0; i < networkCount; i++) {
+// Print the SSID (network name), RSSI (signal strength), and Encryption type
+Serial.print(i + 1);
+Serial.print(": ");
+Serial.print(WiFi.SSID(i)); // Network name (SSID)
+Serial.print(" | Signal Strength: ");
+Serial.print(WiFi.RSSI(i)); // Signal strength (in dBm)
+Serial.print(" dBm | Encryption: ");
+Serial.println(WiFi.encryptionType(i)); // Encryption type
 }
 }
-int main()
-{
-int a[10],i,n;
-printf("\nhow many number=");
-scanf("%d",&n);
-printf(" \nenter the unsorted value=");
-for(i=0;i<n;i++)
-{
-scanf("%d",&a[i]);
 }
-quicksort(a,0,n-1);
-printf("\n sorted value are =");
-for(i=0;i<n;i++)
-{
-printf("%d\t",a[i]);
+void loop() {
+// Nothing to do here as we only need to scan once
 }
-} 

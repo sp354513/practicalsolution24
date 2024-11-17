@@ -1,107 +1,129 @@
-Q.1) Write a program to implement to find out solution for 0/1 knapsack problem using 
-dynamic programming.
+Q.1 Write a Java Program to implement Observer Design Pattern for number conversion. Accept
+a number in Decimal form and represent it in Hexadecimal, Octal and Binary. Change the
+Number and it reflects in other forms also
+1. Observer Interface
+java
+Copy code
+// Observer Interface
+public interface Observer {
+ void update(int decimalNumber);
+}
+2. Concrete Observers (Hexadecimal, Octal, Binary)
+java
+Copy code
+// Concrete Observer for Hexadecimal format
+public class HexadecimalObserver implements Observer {
+ @Override
+ public void update(int decimalNumber) {
+ System.out.println("Hexadecimal: " +
+Integer.toHexString(decimalNumber).toUpperCase());
+ }
+}
+// Concrete Observer for Octal format
+public class OctalObserver implements Observer {
+ @Override
+ public void update(int decimalNumber) {
+ System.out.println("Octal: " + Integer.toOctalString(decimalNumber));
+ }
+}
+// Concrete Observer for Binary format
+public class BinaryObserver implements Observer {
+ @Override
+ public void update(int decimalNumber) {
+ System.out.println("Binary: " +
+Integer.toBinaryString(decimalNumber));
+ }
+}
+3. Subject (DecimalNumber)
+java
+Copy code
+// Subject that holds the decimal number and notifies observers
+import java.util.ArrayList;
+import java.util.List;
+public class DecimalNumber {
+ private int decimalNumber;
+ private List<Observer> observers = new ArrayList<>();
+ // Attach an observer
+ public void attach(Observer observer) {
+ observers.add(observer);
+ }
+ // Detach an observer
+ public void detach(Observer observer) {
+ observers.remove(observer);
+ }
+ // Set the decimal number and notify observers
+ public void setDecimalNumber(int decimalNumber) {
+ this.decimalNumber = decimalNumber;
+ notifyObservers();
+ }
+ // Notify all observers about the change
+ private void notifyObservers() {
+ for (Observer observer : observers) {
+ observer.update(decimalNumber);
+ }
+ }
+}
+4. Main Program (Client Code)
+java
+Copy code
+import java.util.Scanner;
+public class ObserverPatternTest {
+ public static void main(String[] args) {
+ // Create the Subject (DecimalNumber)
+ DecimalNumber decimalNumber = new DecimalNumber();
 
-#include<stdio.h>
-int max(int a, int b) {
- return (a > b) ? a : b;
-}
-int knapsack(int W, int wt[], int val[], int n) {
- int i, w;
- int K[n+1][W+1];
- for (i = 0; i <= n; i++) {
- for (w = 0; w <= W; w++) {
- if (i == 0 || w == 0)
- K[i][w] = 0;
- else if (wt[i-1] <= w)
- K[i][w] = max(val[i-1] + K[i-1][w-wt[i-1]], K[i-1][w]);
- else
- K[i][w] = K[i-1][w];
+ // Create the Observers
+ HexadecimalObserver hexObserver = new HexadecimalObserver();
+ OctalObserver octObserver = new OctalObserver();
+ BinaryObserver binObserver = new BinaryObserver();
+
+ // Attach observers to the subject
+ decimalNumber.attach(hexObserver);
+ decimalNumber.attach(octObserver);
+ decimalNumber.attach(binObserver);
+ // Accept input from user
+ Scanner scanner = new Scanner(System.in);
+ System.out.print("Enter a decimal number: ");
+ int number = scanner.nextInt();
+ // Set the decimal number and update all observers
+ decimalNumber.setDecimalNumber(number);
+
+ // Allow the user to change the number
+ System.out.print("\nEnter a new decimal number: ");
+ number = scanner.nextInt();
+
+ // Update observers with the new number
+ decimalNumber.setDecimalNumber(number);
+
+ scanner.close();
  }
- }
- return K[n][W];
-}
-int main() {
- int val[] = {60, 100, 120}; 
- int wt[] = {10, 20, 30}; 
- int W = 50; 
- int n = sizeof(val)/sizeof(val[0]);
- printf("Maximum value that can be obtained: %d", knapsack(W, wt, val, n));
- return 0;
 }
 
-Q.2) Write a program to determine if a given graph is a Hamiltonian cycle or not.
 
-#include <stdio.h>
-#include <stdlib.h>
-#define MAX_VERTICES 100
-struct Node {
- int data;
- struct Node* next;
-};
-struct Graph {
- int numVertices;
- struct Node** adjLists;
- int* visited;
-};
-struct Node* createNode(int data) {
- struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
- newNode->data = data;
- newNode->next = NULL;
- return newNode;
+
+Q.2 Write a program to connect with the available Wi-Fi using Arduino. [15 M]
+#include <ESP8266WiFi.h> // Include the Wi-Fi library for ESP8266
+// Replace these with your network credentials
+const char* ssid = "your-SSID"; // Wi-Fi SSID (name of the Wi-Fi network)
+const char* password = "your-PASSWORD"; // Wi-Fi Password
+void setup() {
+// Start the Serial communication
+Serial.begin(115200);
+
+// Connect to Wi-Fi
+Serial.println("Connecting to Wi-Fi...");
+WiFi.begin(ssid, password); // Start the connection using SSID and password
+// Wait for the connection to establish
+while (WiFi.status() != WL_CONNECTED) {
+delay(500);
+Serial.print(".");
 }
-struct Graph* createGraph(int numVertices) {
- struct Graph* graph = (struct Graph*)malloc(sizeof(struct Graph));
- graph->numVertices = numVertices;
- graph->adjLists = (struct Node**)malloc(numVertices * sizeof(struct Node*));
- graph->visited = (int*)malloc(numVertices * sizeof(int));
- for (int i = 0; i < numVertices; i++) {
- graph->adjLists[i] = NULL;
- graph->visited[i] = 0;
- }
- return graph;
+// Once connected, print the local IP address
+Serial.println("");
+Serial.println("Connected to Wi-Fi!");
+Serial.print("IP Address: ");
+Serial.println(WiFi.localIP()); // Print the IP address assigned to the ESP8266
 }
-void addEdge(struct Graph* graph, int src, int dest) {
- struct Node* newNode = createNode(dest);
- newNode->next = graph->adjLists[src];
- graph->adjLists[src] = newNode;
-}
-int DFS(struct Graph* graph, int startVertex, int currentVertex, int numVisited, int start) {
- graph->visited[currentVertex] = 1;
- if (numVisited == graph->numVertices && start == startVertex) {
- return 1; 
- }
- struct Node* temp = graph->adjLists[currentVertex];
- while (temp != NULL) {
- int adjVertex = temp->data;
- if (!graph->visited[adjVertex]) {
- if (DFS(graph, startVertex, adjVertex, numVisited + 1, start)) {
- return 1;
- }
- }
- temp = temp->next;
- }
- graph->visited[currentVertex] = 0; 
- return 0;
-}
-int isHamiltonianCycle(struct Graph* graph) {
- for (int i = 0; i < graph->numVertices; i++) {
- if (DFS(graph, i, i, 1, i)) {
- return 1; 
- }
- }
- return 0; 
-}
-int main() {
- struct Graph* graph = createGraph(5);
- addEdge(graph, 0, 1);
- addEdge(graph, 1, 2);
- addEdge(graph, 2, 3);
- addEdge(graph, 3, 4);
- addEdge(graph, 4, 0);
- if (isHamiltonianCycle(graph)) {
- printf("The graph contains a Hamiltonian cycle.\n");
- } else {
- printf("The graph does not contain a Hamiltonian cycle.\n");
- }
- return 0;
+void loop() {
+// You can add additional functionality here if needed
 }
