@@ -1,212 +1,188 @@
 Q.1 Write a Java Program to implement undo command to test Ceiling fan. [15 M]
 Steps
-1. Define a Command interface with execute() and undo() methods.
-2. Create a CeilingFan receiver class that has various speed settings and an off state.
-3. Implement concrete command classes
-(CeilingFanLowCommand, CeilingFanMediumCommand, CeilingFanHighCommand, Ceil
-ingFanOffCommand) to set different fan speeds.
-4. Each command will store the previous speed of the fan, allowing the undo method to
-revert to the previous state.
-5. Test the functionality by changing fan speeds and using the undo feature.
-Code Implementation
-Step 1: Command Interface
-java
-Copy code
-// Command interface
-interface Command {
- void execute();
- void undo();
-}
-Step 2: CeilingFan Receiver Class
-The CeilingFan class will have methods to set different speeds and a variable to keep track of
-its current speed.
-java
-Copy code
-// Receiver class: CeilingFan
+// Step 1: CeilingFan Class
 class CeilingFan {
- public static final int HIGH = 3;
- public static final int MEDIUM = 2;
- public static final int LOW = 1;
- public static final int OFF = 0;
- private int speed;
- public CeilingFan() {
- speed = OFF;
- }
- public void high() {
- speed = HIGH;
- System.out.println("Ceiling fan is on high");
- }
- public void medium() {
- speed = MEDIUM;
- System.out.println("Ceiling fan is on medium");
- }
- public void low() {
- speed = LOW;
- System.out.println("Ceiling fan is on low");
- }
- public void off() {
- speed = OFF;
- System.out.println("Ceiling fan is off");
- }
- public int getSpeed() {
- return speed;
- }
+    public static final int OFF = 0;
+    public static final int LOW = 1;
+    public static final int MEDIUM = 2;
+    public static final int HIGH = 3;
+
+    private int speed;
+
+    public CeilingFan() {
+        speed = OFF; // Default state is OFF
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public String getSpeedName() {
+        return switch (speed) {
+            case OFF -> "OFF";
+            case LOW -> "LOW";
+            case MEDIUM -> "MEDIUM";
+            case HIGH -> "HIGH";
+            default -> "UNKNOWN";
+        };
+    }
 }
-Step 3: Concrete Command Classes
-Each command class sets a specific speed for the fan and stores the previous speed so that it can
-be reverted with undo().
-java
-Copy code
-// Command to set ceiling fan to high
-class CeilingFanHighCommand implements Command {
- private CeilingFan ceilingFan;
- private int prevSpeed;
- public CeilingFanHighCommand(CeilingFan ceilingFan) {
- this.ceilingFan = ceilingFan;
- }
- @Override
- public void execute() {
- prevSpeed = ceilingFan.getSpeed();
- ceilingFan.high();
- }
- @Override
- public void undo() {
- setPreviousSpeed();
- }
- private void setPreviousSpeed() {
- if (prevSpeed == CeilingFan.HIGH) ceilingFan.high();
- else if (prevSpeed == CeilingFan.MEDIUM) ceilingFan.medium();
- else if (prevSpeed == CeilingFan.LOW) ceilingFan.low();
- else ceilingFan.off();
- }
+
+// Step 2: Command Interface
+interface Command {
+    void execute();
+    void undo();
 }
-// Command to set ceiling fan to medium
-class CeilingFanMediumCommand implements Command {
- private CeilingFan ceilingFan;
- private int prevSpeed;
- public CeilingFanMediumCommand(CeilingFan ceilingFan) {
- this.ceilingFan = ceilingFan;
- }
- @Override
- public void execute() {
- prevSpeed = ceilingFan.getSpeed();
- ceilingFan.medium();
- }
- @Override
- public void undo() {
- setPreviousSpeed();
- }
- private void setPreviousSpeed() {
- if (prevSpeed == CeilingFan.HIGH) ceilingFan.high();
- else if (prevSpeed == CeilingFan.MEDIUM) ceilingFan.medium();
- else if (prevSpeed == CeilingFan.LOW) ceilingFan.low();
- else ceilingFan.off();
- }
+
+// Step 3: Concrete Command Classes
+class FanLowCommand implements Command {
+    private CeilingFan fan;
+    private int prevSpeed;
+
+    public FanLowCommand(CeilingFan fan) {
+        this.fan = fan;
+    }
+
+    @Override
+    public void execute() {
+        prevSpeed = fan.getSpeed();
+        fan.setSpeed(CeilingFan.LOW);
+        System.out.println("Fan set to LOW");
+    }
+
+    @Override
+    public void undo() {
+        fan.setSpeed(prevSpeed);
+        System.out.println("Undo: Fan set to " + fan.getSpeedName());
+    }
 }
-// Command to set ceiling fan to low
-class CeilingFanLowCommand implements Command {
- private CeilingFan ceilingFan;
- private int prevSpeed;
- public CeilingFanLowCommand(CeilingFan ceilingFan) {
- this.ceilingFan = ceilingFan;
- }
- @Override
- public void execute() {
- prevSpeed = ceilingFan.getSpeed();
- ceilingFan.low();
- }
- @Override
- public void undo() {
- setPreviousSpeed();
- }
- private void setPreviousSpeed() {
- if (prevSpeed == CeilingFan.HIGH) ceilingFan.high();
- else if (prevSpeed == CeilingFan.MEDIUM) ceilingFan.medium();
- else if (prevSpeed == CeilingFan.LOW) ceilingFan.low();
- else ceilingFan.off();
- }
+
+class FanMediumCommand implements Command {
+    private CeilingFan fan;
+    private int prevSpeed;
+
+    public FanMediumCommand(CeilingFan fan) {
+        this.fan = fan;
+    }
+
+    @Override
+    public void execute() {
+        prevSpeed = fan.getSpeed();
+        fan.setSpeed(CeilingFan.MEDIUM);
+        System.out.println("Fan set to MEDIUM");
+    }
+
+    @Override
+    public void undo() {
+        fan.setSpeed(prevSpeed);
+        System.out.println("Undo: Fan set to " + fan.getSpeedName());
+    }
 }
-// Command to turn off the ceiling fan
-class CeilingFanOffCommand implements Command {
- private CeilingFan ceilingFan;
- private int prevSpeed;
- public CeilingFanOffCommand(CeilingFan ceilingFan) {
- this.ceilingFan = ceilingFan;
- }
- @Override
- public void execute() {
- prevSpeed = ceilingFan.getSpeed();
- ceilingFan.off();
- }
- @Override
- public void undo() {
- setPreviousSpeed();
- }
- private void setPreviousSpeed() {
- if (prevSpeed == CeilingFan.HIGH) ceilingFan.high();
- else if (prevSpeed == CeilingFan.MEDIUM) ceilingFan.medium();
- else if (prevSpeed == CeilingFan.LOW) ceilingFan.low();
- else ceilingFan.off();
- }
+
+class FanHighCommand implements Command {
+    private CeilingFan fan;
+    private int prevSpeed;
+
+    public FanHighCommand(CeilingFan fan) {
+        this.fan = fan;
+    }
+
+    @Override
+    public void execute() {
+        prevSpeed = fan.getSpeed();
+        fan.setSpeed(CeilingFan.HIGH);
+        System.out.println("Fan set to HIGH");
+    }
+
+    @Override
+    public void undo() {
+        fan.setSpeed(prevSpeed);
+        System.out.println("Undo: Fan set to " + fan.getSpeedName());
+    }
 }
-Step 4: Remote Control (Invoker) Class with Undo Functionality
-java
-Copy code
-// RemoteControl class to invoke commands
+
+class FanOffCommand implements Command {
+    private CeilingFan fan;
+    private int prevSpeed;
+
+    public FanOffCommand(CeilingFan fan) {
+        this.fan = fan;
+    }
+
+    @Override
+    public void execute() {
+        prevSpeed = fan.getSpeed();
+        fan.setSpeed(CeilingFan.OFF);
+        System.out.println("Fan set to OFF");
+    }
+
+    @Override
+    public void undo() {
+        fan.setSpeed(prevSpeed);
+        System.out.println("Undo: Fan set to " + fan.getSpeedName());
+    }
+}
+
+// Step 4: RemoteControl Class
 class RemoteControl {
- private Command slot;
- private Command lastCommand;
- public void setCommand(Command command) {
- slot = command;
- }
- public void pressButton() {
- slot.execute();
- lastCommand = slot;
- }
- public void pressUndo() {
- if (lastCommand != null) {
- lastCommand.undo();
- }
- }
+    private Command currentCommand;
+    private Command lastCommand;
+
+    public void setCommand(Command command) {
+        currentCommand = command;
+    }
+
+    public void pressButton() {
+        if (currentCommand != null) {
+            currentCommand.execute();
+            lastCommand = currentCommand;
+        }
+    }
+
+    public void pressUndo() {
+        if (lastCommand != null) {
+            lastCommand.undo();
+        }
+    }
 }
-Step 5: Testing the Ceiling Fan with Undo Functionality
-java
-Copy code
+
+// Step 5: Main Class to Test
 public class CeilingFanTest {
- public static void main(String[] args) {
- RemoteControl remote = new RemoteControl();
- CeilingFan ceilingFan = new CeilingFan();
- // Create commands for different speeds and off state
- Command ceilingFanHigh = new CeilingFanHighCommand(ceilingFan);
- Command ceilingFanMedium = new CeilingFanMediumCommand(ceilingFan);
- Command ceilingFanLow = new CeilingFanLowCommand(ceilingFan);
- Command ceilingFanOff = new CeilingFanOffCommand(ceilingFan);
- // Test turning fan to high and undoing
- remote.setCommand(ceilingFanHigh);
- remote.pressButton();
- remote.pressUndo();
- // Test turning fan to medium and undoing
- remote.setCommand(ceilingFanMedium);
- remote.pressButton();
- remote.pressUndo();
- // Test turning fan to low and undoing
- remote.setCommand(ceilingFanLow);
- remote.pressButton();
- remote.pressUndo();
- // Test turning fan off and undoing
- remote.setCommand(ceilingFanOff);
- remote.pressButton();
- remote.pressUndo();
- }
+    public static void main(String[] args) {
+        CeilingFan fan = new CeilingFan();
+
+        Command lowCommand = new FanLowCommand(fan);
+        Command mediumCommand = new FanMediumCommand(fan);
+        Command highCommand = new FanHighCommand(fan);
+        Command offCommand = new FanOffCommand(fan);
+
+        RemoteControl remote = new RemoteControl();
+
+        // Test fan operations
+        remote.setCommand(lowCommand);
+        remote.pressButton();
+
+        remote.setCommand(mediumCommand);
+        remote.pressButton();
+
+        remote.setCommand(highCommand);
+        remote.pressButton();
+
+        // Undo last command
+        remote.pressUndo();
+
+        // Turn off the fan
+        remote.setCommand(offCommand);
+        remote.pressButton();
+
+        // Undo last command
+        remote.pressUndo();
+    }
 }
-Explanation
-1. Command Interface: Each command has an execute and an undo method.
-2. Concrete Commands: Commands store the previous speed before executing a new one,
-allowing them to revert with undo().
-3. RemoteControl (Invoker): Tracks the last executed command and calls undo() on it
-when the undo button is pressed.
-4. Testing: This program will print each fan speed change, and when undo() is called, it
-will revert to the previous speed.
 
 
 
