@@ -1,118 +1,101 @@
-Q.1 Write a Java Program to implement an Adapter design pattern in mobile charger. Define two
-classes – Volt (to measure volts) and Socket (producing constant volts of 120V). Build an
-adapter that can produce 3 volts, 12 volts and default 120 volts. Implements Adapter pattern
-using Class Adapter
-Step 1: Define the Volt Class
-The Volt class represents the voltage and will have methods to get the voltage in different units.
-java
-Copy code
-public class Volt {
- private int volts;
- public Volt(int volts) {
- this.volts = volts;
- }
- public int getVolts() {
- return volts;
- }
-}
-Step 2: Define the Socket Class
-The Socket class represents a socket that provides 120V (constant voltage).
-java
-Copy code
-public class Socket {
- public Volt getVolt() {
- return new Volt(120); // Socket provides 120V by default
- }
-}
-Step 3: Define the Adapter Class
-In the Class Adapter design pattern, the adapter extends the existing class (Socket) to modify
-the behavior. We will create an adapter that can return different voltages (3V, 12V, or 120V).
-java
-Copy code
-public class SocketAdapter extends Socket {
+Q.1. Create RNN model and analyze the Google stock price dataset. Find out
+increasing or decreasing trends of stock price for the next day
+Python Code Example:
 
- // Convert 120V to 3V
- public Volt get3Volt() {
- Volt v = getVolt(); // Get 120V from the Socket
- return convertVolt(v, 40); // 120V / 40 = 3V
- }
- // Convert 120V to 12V
- public Volt get12Volt() {
- Volt v = getVolt(); // Get 120V from the Socket
- return convertVolt(v, 10); // 120V / 10 = 12V
- }
- // No conversion, just return 120V
- public Volt get120Volt() {
- return getVolt(); // Return 120V
- }
- // Helper method to convert voltage
- private Volt convertVolt(Volt v, int divider) {
- return new Volt(v.getVolts() / divider);
- }
-}
-Step 4: Test the Adapter Pattern
-Finally, we will create a main class to test the functionality of the Adapter pattern by creating
-a SocketAdapter and using it to get 3V, 12V, and 120V.
-java
-Copy code
-public class AdapterPatternTest {
- public static void main(String[] args) {
- SocketAdapter socketAdapter = new SocketAdapter();
- // Getting 120V from the socket
- System.out.println("Voltage obtained from socket: " +
-socketAdapter.get120Volt().getVolts() + "V");
- // Getting 12V using the adapter
- System.out.println("Voltage after conversion to 12V: " +
-socketAdapter.get12Volt().getVolts() + "V");
- // Getting 3V using the adapter
- System.out.println("Voltage after conversion to 3V: " +
-socketAdapter.get3Volt().getVolts() + "V");
- }
-}
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import yfinance as yf
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.model_selection import train_test_split
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense, Dropout
+from sklearn.metrics import accuracy_score
+df = yf.download('GOOGL', start='2010-01-01', end='2024-01-01')
+df.head()
+df = df[['Close']]
+scaler = MinMaxScaler(feature_range=(0, 1))
+scaled_data = scaler.fit_transform(df)
+def create_dataset(data, time_step=60):
+ X, y = [], []
+ for i in range(time_step, len(data)):
+ X.append(data[i-time_step:i, 0])
+ y.append(1 if data[i, 0] > data[i-1, 0] else 0) 
+for decrease
+ return np.array(X), np.array(y)
+X, y = create_dataset(scaled_data)
+X = X.reshape(X.shape[0], X.shape[1], 1) 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
+random_state=42)
+model = Sequential()
+model.add(LSTM(units=50, return_sequences=True,
+input_shape=(X_train.shape[1], 1)))
+model.add(Dropout(0.2))
+model.add(LSTM(units=50, return_sequences=False))
+model.add(Dropout(0.2))
+model.add(Dense(units=1, activation='sigmoid')) 
+(increase), 0 (decrease)
+model.compile(optimizer='adam', loss='binary_crossentropy',
+metrics=['accuracy'])
+model.fit(X_train, y_train, epochs=10, batch_size=32,
+validation_data=(X_test, y_test))
+loss, accuracy = model.evaluate(X_test, y_test)
+print(f'Test Accuracy: {accuracy * 100:.2f}%')
+last_60_days = scaled_data[-60:]
+last_60_days = last_60_days.reshape(1, -1)
+last_60_days = last_60_days.reshape((1, 60, 1))
+predicted_trend = model.predict(last_60_days)
+predicted_trend = 1 if predicted_trend[0][0] > 0.5 else 0
+if predicted_trend == 1:
+ print("The stock price is predicted to increase tomorrow.")
+else:
+ print("The stock price is predicted to decrease tomorrow.")
+predicted_stock_price = model.predict(X_test)
+predicted_stock_price = (predicted_stock_price > 0.5)
+plt.figure(figsize=(10, 6))
+plt.plot(y_test, color='blue', label='Real Stock Price Trend')
+plt.plot(predicted_stock_price, color='red', label='Predicted Stock Price Trend')
+plt.title('Stock Price Trend Prediction')
+plt.xlabel('Days')
+plt.ylabel('Trend (1 = Increase, 0 = Decrease)')
+plt.legend()
+plt.show()
 
+Q.2. Write a python program to implement simple Linear Regression for
+predicting house price
 
-
-
-
-Q.2 Write a program to measure the distance using ultrasonic sensor and make LED blink using
-Arduino.
-#define TRIG_PIN 9 // Trigger pin of HC-SR04
-#define ECHO_PIN 10 // Echo pin of HC-SR04
-#define LED_PIN 13 // LED pin
-void setup() {
-// Initialize the serial communication
-Serial.begin(9600);
-// Initialize the pins
-pinMode(TRIG_PIN, OUTPUT);
-pinMode(ECHO_PIN, INPUT);
-pinMode(LED_PIN, OUTPUT);
-// Make sure the LED is off initially
-digitalWrite(LED_PIN, LOW);
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+actual dataset (e.g., 'house_prices.csv')
+data = {
+ 'Area': [1500, 1800, 2400, 3000, 3500, 4000, 4500, 5000, 5500, 6000],
+ 'Price': [245000, 312000, 369000, 450000, 512000, 570000, 600000, 650000,
+700000, 750000]
 }
-void loop() {
-// Send a pulse to trigger the ultrasonic sensor
-digitalWrite(TRIG_PIN, LOW); // Ensure the trigger pin is LOW
-delayMicroseconds(2);
-digitalWrite(TRIG_PIN, HIGH); // Send the pulse
-delayMicroseconds(10);
-digitalWrite(TRIG_PIN, LOW); // Stop the pulse
-// Measure the time for the pulse to return
-long duration = pulseIn(ECHO_PIN, HIGH);
-// Calculate the distance in cm (Speed of sound = 343 m/s = 0.0343 cm/µs)
-long distance = duration * 0.0343 / 2;
-// Print the distance to the Serial Monitor
-Serial.print("Distance: ");
-Serial.print(distance);
-Serial.println(" cm");
-// If the distance is less than 20 cm, blink the LED
-if (distance < 20) {
-digitalWrite(LED_PIN, HIGH); // Turn LED on
-delay(500); // Wait for 500ms
-digitalWrite(LED_PIN, LOW); // Turn LED off
-delay(500); // Wait for 500ms
-} else {
-digitalWrite(LED_PIN, LOW); // Keep LED off if distance > 20 cm
-}
-// Add a small delay before taking the next reading
-delay(100);
-}
+df = pd.DataFrame(data)
+X = df[['Area']] 
+y = df['Price'] 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
+random_state=42)
+model = LinearRegression()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+print(f'Mean Squared Error: {mse}')
+print(f'R-squared: {r2}')
+plt.scatter(X_test, y_test, color='blue', label='Actual prices')
+plt.plot(X_test, y_pred, color='red', label='Regression line')
+plt.title('House Price Prediction')
+plt.xlabel('Area (Square feet)')
+plt.ylabel('Price')
+plt.legend()
+plt.show()
+new_area = np.array([[2500]])
+predicted_price = model.predict(new_area)
+print(f'Predicted price for a house with 2500 sq. feet:
+${predicted_price[0]:,.2f}')

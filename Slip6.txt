@@ -1,178 +1,73 @@
-Q.1 Write a Java Program to implement command pattern to test Remote Control
-1. Define the Command Interface
-The Command interface defines a single method execute() that all concrete commands must
-implement.
-java
-Copy code
-// Command interface
-interface Command {
- void execute();
-}
-2. Create Concrete Command Classes
-Each concrete command will implement the Command interface and perform an action on the
-receiver. Here, let’s assume we have Light and Fan devices to control.
-Light Commands
-java
-Copy code
-// Receiver class: Light
-class Light {
- public void on() {
- System.out.println("Light is ON");
- }
- public void off() {
- System.out.println("Light is OFF");
- }
-}
-// Command to turn the light on
-class LightOnCommand implements Command {
- private Light light;
- public LightOnCommand(Light light) {
- this.light = light;
- }
- @Override
- public void execute() {
- light.on();
- }
-}
-// Command to turn the light off
-class LightOffCommand implements Command {
- private Light light;
- public LightOffCommand(Light light) {
- this.light = light;
- }
- @Override
- public void execute() {
- light.off();
- }
-}
-Fan Commands
-java
-Copy code
-// Receiver class: Fan
-class Fan {
- public void start() {
- System.out.println("Fan is running");
- }
- public void stop() {
- System.out.println("Fan is stopped");
- }
-}
-// Command to start the fan
-class FanStartCommand implements Command {
- private Fan fan;
- public FanStartCommand(Fan fan) {
- this.fan = fan;
- }
- @Override
- public void execute() {
- fan.start();
- }
-}
-// Command to stop the fan
-class FanStopCommand implements Command {
- private Fan fan;
- public FanStopCommand(Fan fan) {
- this.fan = fan;
- }
- @Override
- public void execute() {
- fan.stop();
- }
-}
-3. Create the Remote Control (Invoker)
-The RemoteControl class has buttons (slots) that execute commands.
-java
-Copy code
-// Invoker class: RemoteControl
-class RemoteControl {
- private Command[] buttons;
- public RemoteControl() {
- buttons = new Command[4];
- }
- public void setCommand(int slot, Command command) {
- buttons[slot] = command;
- }
- public void pressButton(int slot) {
- if (buttons[slot] != null) {
- buttons[slot].execute();
- } else {
- System.out.println("No command assigned to this button");
- }
- }
-}
-4. Test the Remote Control
-Now, we can test the Remote Control by assigning commands to different buttons and pressing
-them.
-java
-Copy code
-public class RemoteControlTest {
- public static void main(String[] args) {
- RemoteControl remote = new RemoteControl();
- // Creating receivers
- Light livingRoomLight = new Light();
- Fan ceilingFan = new Fan();
- // Creating commands
- Command lightOn = new LightOnCommand(livingRoomLight);
- Command lightOff = new LightOffCommand(livingRoomLight);
- Command fanStart = new FanStartCommand(ceilingFan);
- Command fanStop = new FanStopCommand(ceilingFan);
- // Setting commands to remote control buttons
- remote.setCommand(0, lightOn);
- remote.setCommand(1, lightOff);
- remote.setCommand(2, fanStart);
- remote.setCommand(3, fanStop);
- // Testing the remote control
- System.out.println("Testing Remote Control:");
- remote.pressButton(0); // Light ON
- remote.pressButton(1); // Light OFF
- remote.pressButton(2); // Fan ON
- remote.pressButton(3); // Fan OFF
- }
-}
+Q.1. Write a python program to implement Polynomial Linear Regression for Boston
+Housing Dataset.
 
+import pandas as pd
+import numpy as np
+from sklearn.datasets import load_boston
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.metrics import mean_squared_error, r2_score
+import matplotlib.pyplot as plt
+boston = load_boston()
+data = pd.DataFrame(data=boston.data, columns=boston.feature_names)
+data['PRICE'] = boston.target 
+print("First few rows of the Boston Housing dataset:")
+print(data.head())
+X = data.drop('PRICE', axis=1) 
+y = data['PRICE'] 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
+random_state=42)
+poly = PolynomialFeatures(degree=2)
+X_train_poly = poly.fit_transform(X_train)
+X_test_poly = poly.transform(X_test)
+model = LinearRegression()
+model.fit(X_train_poly, y_train)
+y_pred = model.predict(X_test_poly)
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+print(f"\nMean Squared Error (MSE): {mse:.2f}")
+print(f"R-squared (R²) Score: {r2:.2f}")
+plt.figure(figsize=(8, 6))
+plt.scatter(y_test, y_pred, color='blue', alpha=0.6)
+plt.plot([y.min(), y.max()], [y.min(), y.max()], color='red', linewidth=2) 
+reference
+plt.xlabel('Actual House Prices')
+plt.ylabel('Predicted House Prices')
+plt.title('Actual vs Predicted House Prices (Polynomial Regression)')
+plt.show()
 
-Q.2 Write a program to get temperature notification using Arduino.
-#include <DHT.h>
-// Define DHT sensor type and pin
-#define DHTPIN 2 // Pin connected to the DHT sensor
-#define DHTTYPE DHT11 // DHT11 or DHT22
-// Threshold temperature for notifications
-const float TEMP_THRESHOLD = 30.0; // Temperature threshold in Celsius
-// Notification output pin (for LED or Buzzer)
-#define NOTIFICATION_PIN 3
-// Initialize the DHT sensor
-DHT dht(DHTPIN, DHTTYPE);
-void setup() {
-Serial.begin(9600);
-dht.begin();
+Q.2. Use K-means clustering model and classify the employees into various income
+groups or clusters. Preprocess data if require (i.e. drop missing or null values).
 
-// Initialize notification pin
-pinMode(NOTIFICATION_PIN, OUTPUT);
-digitalWrite(NOTIFICATION_PIN, LOW); // Start with LED/Buzzer OFF
+import pandas as pd
+import numpy as np
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
+import seaborn as sns
+data = {
+'Employee_ID': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+'Income': [45000, 54000, 32000, 60000, 73000, 100000, 25000, 59000, 42000,
+80000]
 }
-void loop() {
-// Read temperature and humidity
-float temperature = dht.readTemperature();
-float humidity = dht.readHumidity();
-// Check if the readings are valid
-if (isnan(temperature) || isnan(humidity)) {
-Serial.println("Failed to read from DHT sensor!");
-return;
-}
-// Print temperature and humidity to Serial Monitor
-Serial.print("Temperature: ");
-Serial.print(temperature);
-Serial.print(" °C\tHumidity: ");
-Serial.print(humidity);
-Serial.println(" %");
-// Check if temperature exceeds threshold
-if (temperature > TEMP_THRESHOLD) {
-Serial.println("Warning: Temperature exceeded threshold!");
-// Activate LED/Buzzer as a notification
-digitalWrite(NOTIFICATION_PIN, HIGH);
-delay(500); // Keep the notification ON for 500 ms
-digitalWrite(NOTIFICATION_PIN, LOW);
-}
-
-delay(2000); // Wait for 2 seconds before reading again
-}
+df = pd.DataFrame(data)
+print("\nInitial Data with null values check:")
+print(df.isnull().sum())
+needed
+X = df[['Income']]
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+kmeans = KMeans(n_clusters=3, random_state=42)
+df['Cluster'] = kmeans.fit_predict(X_scaled)
+print("\nCluster Centers (Income groups):")
+print(kmeans.cluster_centers_)
+print("\nEmployee data with cluster labels:")
+print(df)
+plt.figure(figsize=(8, 6))
+sns.scatterplot(data=df, x='Income', y=np.zeros_like(df['Income']), hue='Cluster',
+palette='viridis', s=100)
+plt.title('K-means Clustering of Employees based on Income')
+plt.xlabel('Income')
+plt.ylabel('Cluster')
+plt.show()

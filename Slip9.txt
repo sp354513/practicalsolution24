@@ -1,263 +1,64 @@
-Q.1 Design simple HR Application using Spring Framework [15 M]
-Step 1: Set Up Spring Boot Project
-Create a Spring Boot project using Spring Initializr or your IDE and include these dependencies:
- Spring Web
- Spring Data JPA
- H2 Database
- Thymeleaf
-Step 2: Define the Project Structure
-The structure could look like this:
-css
-Copy code
-src/main/java
-└── com
- └── example
- └── hrapp
- ├── controller
- │ └── EmployeeController.java
- ├── model
- │ └── Employee.java
- ├── repository
- │ └── EmployeeRepository.java
- ├── service
- │ └── EmployeeService.java
- ├── HrApplication.java
-src/main/resources
-└── templates
- ├── employees.html
- ├── add_employee.html
- └── edit_employee.html
-application.properties
-Step 3: Create the Model
-Define an Employee entity with fields for ID, name, department, and email.
-java
-Copy code
-package com.example.hrapp.model;
-import javax.persistence.*;
-@Entity
-public class Employee {
- @Id
- @GeneratedValue(strategy = GenerationType.IDENTITY)
- private Long id;
- private String name;
- private String department;
- private String email;
- // Getters and setters
-}
-Step 4: Create Repository Interface
-Define an interface EmployeeRepository that extends JpaRepository.
-java
-Copy code
-package com.example.hrapp.repository;
-import com.example.hrapp.model.Employee;
-import org.springframework.data.jpa.repository.JpaRepository;
-public interface EmployeeRepository extends JpaRepository<Employee, Long> {
-}
-Step 5: Create Service Class
-The EmployeeService will handle the business logic and communicate with the repository.
-java
-Copy code
-package com.example.hrapp.service;
-import com.example.hrapp.model.Employee;
-import com.example.hrapp.repository.EmployeeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import java.util.List;
-@Service
-public class EmployeeService {
- @Autowired
- private EmployeeRepository employeeRepository;
- public List<Employee> getAllEmployees() {
- return employeeRepository.findAll();
- }
- public Employee getEmployeeById(Long id) {
- return employeeRepository.findById(id).orElse(null);
- }
- public Employee saveEmployee(Employee employee) {
- return employeeRepository.save(employee);
- }
- public void deleteEmployee(Long id) {
- employeeRepository.deleteById(id);
- }
-}
-Step 6: Create Controller
-The EmployeeController will handle HTTP requests and direct to appropriate views.
-java
-Copy code
-package com.example.hrapp.controller;
-import com.example.hrapp.model.Employee;
-import com.example.hrapp.service.EmployeeService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-@Controller
-@RequestMapping("/employees")
-public class EmployeeController {
- @Autowired
- private EmployeeService employeeService;
- @GetMapping
- public String getAllEmployees(Model model) {
- model.addAttribute("employees", employeeService.getAllEmployees());
- return "employees";
- }
- @GetMapping("/add")
- public String addEmployeeForm(Model model) {
- model.addAttribute("employee", new Employee());
- return "add_employee";
- }
- @PostMapping("/save")
- public String saveEmployee(@ModelAttribute Employee employee) {
- employeeService.saveEmployee(employee);
- return "redirect:/employees";
- }
- @GetMapping("/edit/{id}")
- public String editEmployeeForm(@PathVariable Long id, Model model) {
- model.addAttribute("employee", employeeService.getEmployeeById(id));
- return "edit_employee";
- }
- @PostMapping("/update/{id}")
- public String updateEmployee(@PathVariable Long id, @ModelAttribute
-Employee employee) {
- employee.setId(id);
- employeeService.saveEmployee(employee);
- return "redirect:/employees";
- }
- @GetMapping("/delete/{id}")
- public String deleteEmployee(@PathVariable Long id) {
- employeeService.deleteEmployee(id);
- return "redirect:/employees";
- }
-}
-Step 7: Configure H2 Database (application.properties)
-properties
-Copy code
-# application.properties
-spring.datasource.url=jdbc:h2:mem:testdb
-spring.datasource.driverClassName=org.h2.Driver
-spring.datasource.username=sa
-spring.datasource.password=password
-spring.h2.console.enabled=true
-spring.jpa.hibernate.ddl-auto=update
-Step 8: Create Thymeleaf Templates
-employees.html - Display List of Employees
-html
-Copy code
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
- <title>Employees</title>
-</head>
-<body>
- <h2>Employee List</h2>
- <a href="/employees/add">Add Employee</a>
- <table border="1">
- <tr>
+Q.1. Implement Ridge Regression and Lasso regression model using
+boston_houses.csv and take only ‘RM’ and ‘Price’ of the houses. Divide the data as
+training and testing data. Fit line using Ridge regression and to find price of a house if
+it contains 5 rooms and compare results.
 
-<th>ID</th><th>Name</th><th>Department</th><th>Email</th><th>Actions</th>
- </tr>
- <tr th:each="employee : ${employees}">
- <td th:text="${employee.id}"></td>
- <td th:text="${employee.name}"></td>
- <td th:text="${employee.department}"></td>
- <td th:text="${employee.email}"></td>
- <td>
- <a
-th:href="@{/employees/edit/{id}(id=${employee.id})}">Edit</a> |
- <a
-th:href="@{/employees/delete/{id}(id=${employee.id})}">Delete</a>
- </td>
- </tr>
- </table>
-</body>
-</html>
-add_employee.html - Add Employee Form
-html
-Copy code
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
- <title>Add Employee</title>
-</head>
-<body>
- <h2>Add Employee</h2>
- <form th:action="@{/employees/save}" th:object="${employee}"
-method="post">
- <label>Name:</label><input type="text" th:field="*{name}" /><br/>
- <label>Department:</label><input type="text" th:field="*{department}"
-/><br/>
- <label>Email:</label><input type="text" th:field="*{email}" /><br/>
- <button type="submit">Save</button>
- </form>
-</body>
-</html>
-edit_employee.html - Edit Employee Form
-Similar to add_employee.html, but with fields pre-filled using employee data.
-Step 9: Run the Application
-Run the Spring Boot application and open the browser
-at http://localhost:8080/employees to see the list of employees and perform CRUD
-operations.
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import Ridge, Lasso
+from sklearn.metrics import mean_squared_error
+from sklearn.datasets import load_boston
+boston = load_boston()
+df = pd.DataFrame(boston.data, columns=boston.feature_names)
+columns
+df = df[['RM']]
+df['Price'] = boston.target
+X = df[['RM']] 
+y = df['Price']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
+random_state=42)
+ridge_regressor = Ridge(alpha=1.0) 
+ridge_regressor.fit(X_train, y_train)
+lasso_regressor = Lasso(alpha=0.1) 
+lasso_regressor.fit(X_train, y_train)
+y_pred_ridge = ridge_regressor.predict(X_test)
+y_pred_lasso = lasso_regressor.predict(X_test)
+mse_ridge = mean_squared_error(y_test, y_pred_ridge)
+mse_lasso = mean_squared_error(y_test, y_pred_lasso)
+print(f'Mean Squared Error for Ridge Regression: {mse_ridge:.2f}')
+print(f'Mean Squared Error for Lasso Regression: {mse_lasso:.2f}')
+rooms = 5
+price_ridge = ridge_regressor.predict([[rooms]]) 
+price_lasso = lasso_regressor.predict([[rooms]]) 
+print(f'Predicted price for a house with {rooms} rooms using Ridge Regression:
+${price_ridge[0]:.2f}')
+print(f'Predicted price for a house with {rooms} rooms using Lasso Regression:
+${price_lasso[0]:.2f}')
 
+Q.2. Write a python program to implement Linear SVM using UniversalBank.csv 
 
-
-Q.2 Write python programs on Pi : a) Read your name and print Hello message with name b)
-Read two numbers and print their sum, difference, product and division. c) Word and character
-count of a given string. d) Area of a given shape (rectangle, triangle and circle) reading shape
-and appropriate values from standard input.
-a) Read Your Name and Print a Hello Message
-python
-Copy code
-# Read name from input and display a hello message
-name = input("Enter your name: ")
-print(f"Hello, {name}!")
-b) Read Two Numbers and Print Their Sum, Difference, Product, and Division
-python
-Copy code
-# Read two numbers from input
-num1 = float(input("Enter first number: "))
-num2 = float(input("Enter second number: "))
-# Calculate and display the sum, difference, product, and division
-print(f"Sum: {num1 + num2}")
-print(f"Difference: {num1 - num2}")
-print(f"Product: {num1 * num2}")
-if num2 != 0:
- print(f"Division: {num1 / num2}")
-else:
- print("Division: Cannot divide by zero")
-c) Word and Character Count of a Given String
-python
-Copy code
-# Read a string from input
-text = input("Enter a string: ")
-# Calculate word and character count
-word_count = len(text.split())
-char_count = len(text)
-print(f"Word count: {word_count}")
-print(f"Character count: {char_count}")
-d) Area of a Given Shape (Rectangle, Triangle, Circle)
-python
-Copy code
-import math
-# Read the shape type
-shape = input("Enter the shape (rectangle, triangle, circle):
-").strip().lower()
-# Calculate area based on shape
-if shape == "rectangle":
- length = float(input("Enter the length: "))
- width = float(input("Enter the width: "))
- area = length * width
- print(f"Area of rectangle: {area}")
-
-elif shape == "triangle":
- base = float(input("Enter the base: "))
- height = float(input("Enter the height: "))
- area = 0.5 * base * height
- print(f"Area of triangle: {area}")
-
-elif shape == "circle":
- radius = float(input("Enter the radius: "))
- area = math.pi * radius * radius
- print(f"Area of circle: {area}")
-
-else:
-print("Invalid shape entered.")
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+df = pd.read_csv('UniversalBank.csv')
+print(df.isnull().sum())
+df = pd.get_dummies(df, drop_first=True)
+X = df.drop('Personal.Loan', axis=1) 
+y = df['Personal.Loan'] 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
+random_state=42)
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+svm_model = SVC(kernel='linear', random_state=42)
+svm_model.fit(X_train_scaled, y_train)
+y_pred = svm_model.predict(X_test_scaled)
+accuracy = accuracy_score(y_test, y_pred)
+print(f'Accuracy: {accuracy * 100:.2f}%')
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+print("Classification Report:")
+print(classification_report(y_test, y_pred))

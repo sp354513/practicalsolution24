@@ -1,225 +1,49 @@
-Q.1 Write a Java Program to implement Strategy Pattern for Duck Behavior. Create instance
-variable that holds current state of Duck from there, we just need to handle all Flying Behaviors
-and Quack Behavior
-Step 1: Define the FlyBehavior Interface
-java
-Copy code
-public interface FlyBehavior {
- void fly();
-}
-Step 2: Define Concrete Classes for FlyBehavior
-java
-Copy code
-// Concrete Flying Behaviors
-public class FlyWithWings implements FlyBehavior {
- @Override
- public void fly() {
- System.out.println("I am flying with wings!");
- }
-}
-public class FlyNoWay implements FlyBehavior {
- @Override
- public void fly() {
- System.out.println("I can't fly!");
- }
-}
-public class FlyRocketPowered implements FlyBehavior {
- @Override
- public void fly() {
- System.out.println("I am flying with a rocket!");
- }
-}
-Step 3: Define the QuackBehavior Interface
-java
-Copy code
-public interface QuackBehavior {
- void quack();
-}
-Step 4: Define Concrete Classes for QuackBehavior
-java
-Copy code
-// Concrete Quacking Behaviors
-public class Quack implements QuackBehavior {
- @Override
- public void quack() {
- System.out.println("Quack! Quack!");
- }
-}
-public class Squeak implements QuackBehavior {
- @Override
- public void quack() {
- System.out.println("Squeak! Squeak!");
- }
-}
-public class MuteQuack implements QuackBehavior {
- @Override
- public void quack() {
- System.out.println("... (no sound)");
- }
-}
-Step 5: Create the Duck Class
-The Duck class will use the FlyBehavior and QuackBehavior interfaces and delegate the
-behavior to the appropriate strategy.
-java
-Copy code
-public abstract class Duck {
- // Instance variables for holding current behaviors
- FlyBehavior flyBehavior;
- QuackBehavior quackBehavior;
- // Duck behavior methods
- public void performFly() {
- flyBehavior.fly();
- }
- public void performQuack() {
- quackBehavior.quack();
- }
- // Common Duck method
- public void swim() {
- System.out.println("All ducks float on water!");
- }
- // Setter methods to change behaviors dynamically
- public void setFlyBehavior(FlyBehavior fb) {
- flyBehavior = fb;
- }
- public void setQuackBehavior(QuackBehavior qb) {
- quackBehavior = qb;
- }
- // Abstract method for display (each type of duck will implement it)
- public abstract void display();
-}
-Step 6: Create Concrete Duck Classes
-Now, we can create specific types of ducks, each having a different combination of behaviors.
-java
-Copy code
-// Mallard Duck
-public class MallardDuck extends Duck {
- public MallardDuck() {
- flyBehavior = new FlyWithWings();
- quackBehavior = new Quack();
- }
- @Override
- public void display() {
- System.out.println("I am a Mallard Duck!");
- }
-}
-// Model Duck
-public class ModelDuck extends Duck {
- public ModelDuck() {
- flyBehavior = new FlyNoWay();
- quackBehavior = new MuteQuack();
- }
- @Override
- public void display() {
- System.out.println("I am a Model Duck!");
- }
-}
-Step 7: Create the DuckSimulator to Test the Strategy Pattern
-In the DuckSimulator class, we can simulate different ducks and behaviors.
-java
-Copy code
-public class DuckSimulator {
- public static void main(String[] args) {
- // Create a Mallard Duck
- Duck mallard = new MallardDuck();
- mallard.display();
- mallard.performFly(); // Fly with wings
- mallard.performQuack(); // Quack
- System.out.println("\n");
- // Create a Model Duck
- Duck model = new ModelDuck();
- model.display();
- model.performFly(); // Cannot fly
- model.performQuack(); // Mute quack
- // Change behaviors dynamically
- System.out.println("\nChanging Model Duck's behavior...");
- model.setFlyBehavior(new FlyRocketPowered());
- model.setQuackBehavior(new Squeak());
- model.performFly(); // Fly with rocket
- model.performQuack(); // Squeak
- }
-}
-Explanation:
- The Duck class is abstract and defines common behaviors
-(performFly, performQuack, swim), but the actual flying and quacking behaviors are
-delegated to the FlyBehavior and QuackBehavior interfaces, respectively.
- Concrete duck types (like MallardDuck and ModelDuck) initialize their behaviors
-through the constructor.
- The behaviors can be changed dynamically at runtime using
-the setFlyBehavior and setQuackBehavior methods.
+Q.1. Write a python program to transform data with Principal Component Analysis
+(PCA). Use iris dataset.
 
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+from sklearn.datasets import load_iris
+iris = load_iris()
+X = iris.data 
+y = iris.target 
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+plt.figure(figsize=(8, 6))
+plt.scatter(X_pca[:, 0], X_pca[:, 1], c=y, cmap='viridis', edgecolor='k', s=50)
+plt.title('PCA of Iris Dataset')
+plt.xlabel('Principal Component 1')
+plt.ylabel('Principal Component 2')
+plt.colorbar(label='Target Class')
+plt.show()
+print(f'Explained variance ratio for each principal component:
+{pca.explained_variance_ratio_}')
 
+Q.2. Write a Python program to prepare Scatter Plot for Iris Dataset. Convert
+Categorical values in to numeric.
 
-
-Q.2 Write python programs on Pi like:
-a) Print a name 'n' times, where name and n are read from standard input,
-using for and
-while loops.
-b) Handle Divided by Zero Exception.
-c) Print current time for 10 times with an interval of10seconds.
-d) Read a fileline byline and print the word count of each line
-a) Print a Name 'n' Times, Where Name and n are Read from
-Standard Input, Using For and While Loops
-python
-Copy code
-# Using for loop
-name = input("Enter the name: ")
-n = int(input("Enter the number of times to print the name: "))
-# For loop
-print("\nUsing for loop:")
-for _ in range(n):
- print(name)
-# Using while loop
-print("\nUsing while loop:")
-count = 0
-while count < n:
- print(name)
- count += 1
-b) Handle Divided by Zero Exception
-python
-Copy code
-try:
- numerator = float(input("Enter numerator: "))
- denominator = float(input("Enter denominator: "))
- result = numerator / denominator
- print(f"Result: {result}")
-except ZeroDivisionError:
- print("Error: Division by zero is not allowed!")
-except ValueError:
- print("Error: Please enter valid numeric values!")
-c) Print Current Time for 10 Times with an Interval of 10
-Seconds
-python
-Copy code
-import time
-from datetime import datetime
-# Loop 10 times with an interval of 10 seconds
-for i in range(10):
- current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
- print(f"Current Time: {current_time}")
- time.sleep(10) # Wait for 10 seconds before the next print
-d) Read a File Line by Line and Print the Word Count of
-Each Line
-python
-Copy code
-# Make sure there is a file named 'sample.txt' in the same directory
-filename = input("Enter the file name: ")
-try:
- with open(filename, 'r') as file:
- # Read each line from the file
- for line_num, line in enumerate(file, 1):
- word_count = len(line.split()) # Split line into words and count
-them
- print(f"Line {line_num}: Word Count = {word_count}")
-except FileNotFoundError:
- print("Error: The file does not exist!")
-Explanation:
-1. Part a: This program reads a name and the number of times (n) to print
-that name. It demonstrates both for and while loops.
-2. Part b: This program attempts to perform division and handles the
-ZeroDivisionError exception gracefully, printing an error message if
-the denominator is zero.
-3. Part c: The program prints the current time every 10 seconds, using the
-time.sleep() function to pause for 10 seconds between prints.
-4. Part d: This program reads a file line by line and prints the word
-count for each line. It handles FileNotFoundError in case the file
-doesn't exist.
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+iris = load_iris()
+X = iris.data 
+y = iris.target 
+species_mapping = {0: 'setosa', 1: 'versicolor', 2: 'virginica'}
+y_numeric = [species_mapping[i] for i in y]
+iris_df = pd.DataFrame(X, columns=iris.feature_names)
+iris_df['species'] = y_numeric 
+plt.figure(figsize=(8, 6))
+for species in iris_df['species'].unique():
+subset = iris_df[iris_df['species'] == species]
+plt.scatter(subset['sepal length (cm)'], subset['sepal width (cm)'], label=species)
+plt.title('Sepal Length vs Sepal Width for Iris Dataset')
+plt.xlabel('Sepal Length (cm)')
+plt.ylabel('Sepal Width (cm)')
+plt.legend(title='Species')
+plt.grid(True)
+plt.show()

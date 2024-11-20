@@ -1,73 +1,74 @@
-Q.1 Write a Java Program to implement Adapter pattern for Enumeration iterator
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.Vector;
-// Adapter class that adapts Enumeration to Iterator
-class EnumerationIteratorAdapter<T> implements Iterator<T> {
-private Enumeration<T> enumeration;
-// Constructor
-public EnumerationIteratorAdapter(Enumeration<T> enumeration) {
-this.enumeration = enumeration;
-}
-// hasNext() method from Iterator
-@Override
-public boolean hasNext() {
-return enumeration.hasMoreElements();
-}
-// next() method from Iterator
-@Override
-public T next() {
-return enumeration.nextElement();
-}
-// remove() method from Iterator is unsupported for Enumeration
-@Override
-public void remove() {
-throw new UnsupportedOperationException("Remove not supported.");
-}
-}
-public class AdapterPatternExample {
-public static void main(String[] args) {
-// Creating a Vector and populating it with some data
-Vector<String> vector = new Vector<>();
-vector.add("Element1");
-vector.add("Element2");
-vector.add("Element3");
-// Getting an Enumeration from the Vector
-Enumeration<String> enumeration = vector.elements();
-// Adapting Enumeration to Iterator
-Iterator<String> iterator = new EnumerationIteratorAdapter<>(enumeration);
-// Using the adapted Iterator
-System.out.println("Using Enumeration adapted to Iterator:");
-while (iterator.hasNext()) {
-System.out.println(iterator.next());
-}
-}
-}
+Q.1. Write a python program to implement Multiple Linear Regression for Fuel
+Consumption dataset.
 
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+import matplotlib.pyplot as plt
+Consumption', and 'CO2 Emissions'
+data = pd.read_csv('fuel_consumption.csv')
+print("First few rows of the dataset:")
+print(data.head())
+print("\nChecking for null values:")
+print(data.isnull().sum())
+data = data.dropna()
+X = data[['Engine Size', 'Cylinders', 'Fuel Consumption']]
+y = data['CO2 Emissions']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
+random_state=42)
+model = LinearRegression()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+print(f"\nMean Squared Error (MSE): {mse:.2f}")
+print(f"R-squared (R2) Score: {r2:.2f}")
+print("\nModel Coefficients:")
+for feature, coef in zip(X.columns, model.coef_):
+print(f"{feature}: {coef:.2f}")
+print(f"Intercept: {model.intercept_:.2f}")
+plt.figure(figsize=(10, 6))
+plt.scatter(y_test, y_pred, color='blue', alpha=0.6)
+plt.plot([y.min(), y.max()], [y.min(), y.max()], color='red', linewidth=2)
+plt.xlabel('Actual CO2 Emissions')
+plt.ylabel('Predicted CO2 Emissions')
+plt.title('Actual vs Predicted CO2 Emissions')
+plt.show()
 
+Q.2. Write a python program to implement k-nearest Neighbors ML algorithm to
+build prediction model (Use iris Dataset)
 
-Q.2 Write a program to connect with the available Wi-Fi using Arduino.
-#include <ESP8266WiFi.h> // Use <WiFi.h> for ESP32
-// Replace with your network credentials
-const char* ssid = "your_SSID";
-const char* password = "your_PASSWORD";
-void setup() {
-Serial.begin(115200);
-delay(10);
-// Connect to Wi-Fi network
-Serial.println();
-Serial.print("Connecting to ");
-Serial.println(ssid);
-WiFi.begin(ssid, password);
-while (WiFi.status() != WL_CONNECTED) {
-delay(500);
-Serial.print(".");
-}
-Serial.println("");
-Serial.println("Wi-Fi connected successfully.");
-Serial.println("IP address: ");
-Serial.println(WiFi.localIP());
-}
-void loop() {
-// Your code here (e.g., HTTP requests, etc.)
-}
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.datasets import load_iris
+import matplotlib.pyplot as plt
+import seaborn as sns
+iris = load_iris()
+data = pd.DataFrame(data=iris.data, columns=iris.feature_names)
+data['species'] = iris.target
+print("First few rows of the Iris dataset:")
+print(data.head())
+X = data.iloc[:, :-1] 
+y = data['species'] 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
+random_state=42)
+k = 3
+knn = KNeighborsClassifier(n_neighbors=k)
+knn.fit(X_train, y_train)
+y_pred = knn.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print(f"\nAccuracy of k-NN model with k={k}: {accuracy * 100:.2f}%")
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred, target_names=iris.target_names))
+conf_matrix = confusion_matrix(y_test, y_pred)
+plt.figure(figsize=(8, 6))
+sns.heatmap(conf_matrix, annot=True, cmap="Blues", fmt='d',
+xticklabels=iris.target_names, yticklabels=iris.target_names)
+plt.xlabel('Predicted')
+plt.ylabel('Actual')
+plt.title(f'Confusion Matrix for k-NN (k={k}) on Iris Dataset')
+plt.show()

@@ -1,127 +1,77 @@
 Slip 2 :
-Q.1 Write a Java Program to implement Singleton pattern for multithreading
-package welcome;
+Q.1. Write a python program to implement simple Linear Regression for predicting
+house price. First find all null values in a given dataset and remove them
 
-public class SingletonTest {
-    private static final int PROCESSOR_COUNT = Runtime.getRuntime().availableProcessors();
-    private static final Thread[] THREADS = new Thread[PROCESSOR_COUNT];
-    private static int instancesCount = 0;
-    private static SingletonTest instance = null;
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error
+data = pd.read_csv('house_prices.csv')
+print("First few rows of the dataset:")
+print(data.head())
+print("\nChecking for null values:")
+print(data.isnull().sum()) 
+data = data.dropna()
+print("\nData after removing null values:")
+print(data.isnull().sum())
+X = data[['SquareFootage']] # Input feature (independent variable)
+y = data['Price'] # Target variable (dependent variable)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
+random_state=42)
+model = LinearRegression()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+mse = mean_squared_error(y_test, y_pred)
+print(f"\nMean Squared Error: {mse}")
+print(f"Slope (Coefficient): {model.coef_[0]}")
+print(f"Intercept: {model.intercept_}")
+plt.figure(figsize=(10, 6))
+plt.scatter(X, y, color='blue', label='Data Points')
+plt.plot(X, model.predict(X), color='red', linewidth=2, label='Regression Line')
+plt.xlabel('Square Footage')
+plt.ylabel('Price')
+plt.title('House Price Prediction using Linear Regression')
+plt.legend()
+plt.show()
 
-    // Private constructor to prevent instantiation
-    private SingletonTest() {
-    }
+Q.2. The data set refers to clients of a wholesale distributor. It includes the annual
+spending in monetary units on diverse product categories. Using data Wholesale
+customer dataset compute agglomerative clustering to find out annual spending clients
+in the same region?
 
-    // Thread-safe Singleton implementation using synchronized
-    public static synchronized SingletonTest getInstance() {
-        if (instance == null) {
-            instancesCount++;
-            instance = new SingletonTest();
-        }
-        return instance;
-    }
-
-    // Resets the Singleton instance and counter
-    private static void reset() {
-        instancesCount = 0;
-        instance = null;
-    }
-
-    // Validates the environment for the test
-    private static void validate() {
-        if (PROCESSOR_COUNT < 2) {
-            System.out.println("PROCESSOR_COUNT must be >= 2 to run the test.");
-            System.exit(0);
-        }
-    }
-
-    public static void main(String[] args) {
-        validate();
-
-        System.out.printf(
-            "Summary :: PROCESSOR_COUNT: %d, Running Test with %d threads.%n",
-            PROCESSOR_COUNT, PROCESSOR_COUNT
-        );
-
-        long currentMillis = System.currentTimeMillis();
-        int testCount = 0;
-
-        do {
-            reset();
-
-            // Initialize threads
-            for (int i = 0; i < PROCESSOR_COUNT; i++) {
-                THREADS[i] = new Thread(SingletonTest::getInstance);
-            }
-
-            // Start threads
-            for (int i = 0; i < PROCESSOR_COUNT; i++) {
-                THREADS[i].start();
-            }
-
-            // Join threads
-            for (int i = 0; i < PROCESSOR_COUNT; i++) {
-                try {
-                    THREADS[i].join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    Thread.currentThread().interrupt();
-                }
-            }
-
-            testCount++;
-        } while (instancesCount <= 1 && testCount < Integer.MAX_VALUE);
-
-        System.out.printf(
-            "Singleton Pattern is broken after %d tries.%nNumber of instances: %d.%nTest duration: %dms%n",
-            testCount, instancesCount, System.currentTimeMillis() - currentMillis
-        );
-    }
-}
-
-
-Q.2 Write a program to measure the distance using ultrasonic sensor and make LED blink using
-Arduino.
-// Define the pins for the ultrasonic sensor
-const int trigPin = 9;
-const int echoPin = 10;
-// Define the pin for the LED
-const int ledPin = 13;
-// Define variables for measuring distance
-long duration;
-int distance;
-void setup() {
-// Start the serial communication for debugging
-Serial.begin(9600);
-// Set the trigPin as an output and echoPin as an input
-pinMode(trigPin, OUTPUT);
-pinMode(echoPin, INPUT);
-// Set the LED pin as an output
-pinMode(ledPin, OUTPUT);
-}
-void loop() {
-// Send a pulse to trigger the ultrasonic sensor
-digitalWrite(trigPin, LOW);
-delayMicroseconds(2); // Wait for a brief moment to ensure a clean trigger
-digitalWrite(trigPin, HIGH);
-delayMicroseconds(10); // Send a 10-microsecond pulse to trigger the sensor
-digitalWrite(trigPin, LOW);
-// Measure the duration of the pulse from the echoPin
-duration = pulseIn(echoPin, HIGH); // Measure the time the pulse travels
-// Calculate the distance in centimeters (using speed of sound: 343 m/s)
-distance = duration * 0.0344 / 2; // Time * speed of sound / 2 (for round-trip)
-// Print the distance to the Serial Monitor
-Serial.print("Distance: ");
-Serial.print(distance);
-Serial.println(" cm");
-// Blink the LED if the distance is less than a threshold (e.g., 10 cm)
-if (distance < 10) {
-digitalWrite(ledPin, HIGH); // Turn the LED ON
-delay(500); // Wait for 500 milliseconds
-digitalWrite(ledPin, LOW); // Turn the LED OFF
-delay(500); // Wait for 500 milliseconds
-} else {
-digitalWrite(ledPin, LOW); // Ensure the LED is OFF if distance is greater than 10 cm
-}
-delay(100); // Small delay before the next measurement
-}
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import AgglomerativeClustering
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy.cluster.hierarchy import dendrogram, linkage
+data = pd.read_csv('wholesale_customers.csv')
+print("First few rows of the dataset:")
+print(data.head())
+print("\nChecking for null values:")
+print(data.isnull().sum())
+scaler = StandardScaler()
+data_scaled = scaler.fit_transform(data.iloc[:, 2:]) 
+are columns to exclude
+linked = linkage(data_scaled, method='ward')
+plt.figure(figsize=(10, 7))
+dendrogram(linked, orientation='top', distance_sort='ascending',
+show_leaf_counts=False)
+plt.title('Dendrogram for Agglomerative Clustering')
+plt.xlabel('Clients')
+plt.ylabel('Euclidean distances')
+plt.show()
+n_clusters = 3 
+agg_clustering = AgglomerativeClustering(n_clusters=n_clusters, affinity='euclidean',
+linkage='ward')
+data['Cluster'] = agg_clustering.fit_predict(data_scaled)
+plt.figure(figsize=(10, 6))
+sns.scatterplot(data=data, x='Grocery', y='Fresh', hue='Cluster', palette='viridis')
+plt.title('Agglomerative Clustering of Wholesale Customers')
+plt.xlabel('Annual Spending on Grocery')
+plt.ylabel('Annual Spending on Fresh')
+plt.show()
+print("\nCluster means for each feature:")
+print(data.groupby('Cluster').mean())

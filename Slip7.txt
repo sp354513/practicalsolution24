@@ -1,211 +1,57 @@
-Q.1 Write a Java Program to implement undo command to test Ceiling fan. [15 M]
-Steps
-// Step 1: CeilingFan Class
-class CeilingFan {
-    public static final int OFF = 0;
-    public static final int LOW = 1;
-    public static final int MEDIUM = 2;
-    public static final int HIGH = 3;
+Q.1. Fit the simple linear regression model to Salary_positions.csv data. Predict the sa
+of level 11 and level 12 employees
 
-    private int speed;
-
-    public CeilingFan() {
-        speed = OFF; // Default state is OFF
-    }
-
-    public void setSpeed(int speed) {
-        this.speed = speed;
-    }
-
-    public int getSpeed() {
-        return speed;
-    }
-
-    public String getSpeedName() {
-        return switch (speed) {
-            case OFF -> "OFF";
-            case LOW -> "LOW";
-            case MEDIUM -> "MEDIUM";
-            case HIGH -> "HIGH";
-            default -> "UNKNOWN";
-        };
-    }
-}
-
-// Step 2: Command Interface
-interface Command {
-    void execute();
-    void undo();
-}
-
-// Step 3: Concrete Command Classes
-class FanLowCommand implements Command {
-    private CeilingFan fan;
-    private int prevSpeed;
-
-    public FanLowCommand(CeilingFan fan) {
-        this.fan = fan;
-    }
-
-    @Override
-    public void execute() {
-        prevSpeed = fan.getSpeed();
-        fan.setSpeed(CeilingFan.LOW);
-        System.out.println("Fan set to LOW");
-    }
-
-    @Override
-    public void undo() {
-        fan.setSpeed(prevSpeed);
-        System.out.println("Undo: Fan set to " + fan.getSpeedName());
-    }
-}
-
-class FanMediumCommand implements Command {
-    private CeilingFan fan;
-    private int prevSpeed;
-
-    public FanMediumCommand(CeilingFan fan) {
-        this.fan = fan;
-    }
-
-    @Override
-    public void execute() {
-        prevSpeed = fan.getSpeed();
-        fan.setSpeed(CeilingFan.MEDIUM);
-        System.out.println("Fan set to MEDIUM");
-    }
-
-    @Override
-    public void undo() {
-        fan.setSpeed(prevSpeed);
-        System.out.println("Undo: Fan set to " + fan.getSpeedName());
-    }
-}
-
-class FanHighCommand implements Command {
-    private CeilingFan fan;
-    private int prevSpeed;
-
-    public FanHighCommand(CeilingFan fan) {
-        this.fan = fan;
-    }
-
-    @Override
-    public void execute() {
-        prevSpeed = fan.getSpeed();
-        fan.setSpeed(CeilingFan.HIGH);
-        System.out.println("Fan set to HIGH");
-    }
-
-    @Override
-    public void undo() {
-        fan.setSpeed(prevSpeed);
-        System.out.println("Undo: Fan set to " + fan.getSpeedName());
-    }
-}
-
-class FanOffCommand implements Command {
-    private CeilingFan fan;
-    private int prevSpeed;
-
-    public FanOffCommand(CeilingFan fan) {
-        this.fan = fan;
-    }
-
-    @Override
-    public void execute() {
-        prevSpeed = fan.getSpeed();
-        fan.setSpeed(CeilingFan.OFF);
-        System.out.println("Fan set to OFF");
-    }
-
-    @Override
-    public void undo() {
-        fan.setSpeed(prevSpeed);
-        System.out.println("Undo: Fan set to " + fan.getSpeedName());
-    }
-}
-
-// Step 4: RemoteControl Class
-class RemoteControl {
-    private Command currentCommand;
-    private Command lastCommand;
-
-    public void setCommand(Command command) {
-        currentCommand = command;
-    }
-
-    public void pressButton() {
-        if (currentCommand != null) {
-            currentCommand.execute();
-            lastCommand = currentCommand;
-        }
-    }
-
-    public void pressUndo() {
-        if (lastCommand != null) {
-            lastCommand.undo();
-        }
-    }
-}
-
-// Step 5: Main Class to Test
-public class CeilingFanTest {
-    public static void main(String[] args) {
-        CeilingFan fan = new CeilingFan();
-
-        Command lowCommand = new FanLowCommand(fan);
-        Command mediumCommand = new FanMediumCommand(fan);
-        Command highCommand = new FanHighCommand(fan);
-        Command offCommand = new FanOffCommand(fan);
-
-        RemoteControl remote = new RemoteControl();
-
-        // Test fan operations
-        remote.setCommand(lowCommand);
-        remote.pressButton();
-
-        remote.setCommand(mediumCommand);
-        remote.pressButton();
-
-        remote.setCommand(highCommand);
-        remote.pressButton();
-
-        // Undo last command
-        remote.pressUndo();
-
-        // Turn off the fan
-        remote.setCommand(offCommand);
-        remote.pressButton();
-
-        // Undo last command
-        remote.pressUndo();
-    }
-}
+import pandas as pd
+import numpy as np
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
+data = pd.read_csv('Salary_positions.csv')
+print(data.head())
+X = data[['Level']] 
+y = data['Salary'] 
+model = LinearRegression()
+model.fit(X, y)
+levels = np.array([11, 12]).reshape(-1, 1)
+format
+predictions = model.predict(levels)
+print(f"Predicted salary for level 11 employee: ${predictions[0]:,.2f}")
+print(f"Predicted salary for level 12 employee: ${predictions[1]:,.2f}")
+plt.scatter(X, y, color='blue') 
+plt.plot(X, model.predict(X), color='red')
+plt.title('Salary vs Level')
+plt.xlabel('Employee Level')
+plt.ylabel('Salary')
+plt.show()
 
 
+Q.2. Write a python program to implement Naive Bayes on weather forecast dataset.
+[15 M]
 
-
-Q.2 Write a program for LDR to vary the light intensity of LED using Arduino
-// Define the pins
-const int ldrPin = A0; // Analog pin connected to the LDR
-const int ledPin = 9; // PWM pin connected to the LED
-void setup() {
-Serial.begin(9600); // Start serial communication for debugging
-pinMode(ledPin, OUTPUT); // Set LED pin as output
-}
-void loop() {
-// Read the analog value from the LDR
-int ldrValue = analogRead(ldrPin);
-// Map the LDR value (0-1023) to PWM range (0-255)
-int ledBrightness = map(ldrValue, 0, 1023, 0, 255);
-// Set the brightness of the LED
-analogWrite(ledPin, ledBrightness);
-// Print values to Serial Monitor for debugging
-Serial.print("LDR Value: ");
-Serial.print(ldrValue);
-Serial.print(" -> LED Brightness: ");
-Serial.println(ledBrightness);
-delay(100); // Small delay for stability
-}
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import LabelEncoder
+data = pd.read_csv('weather_forecast.csv')
+label_encoder = LabelEncoder()
+data['Temperature'] = label_encoder.fit_transform(data['Temperature'])
+data['Humidity'] = label_encoder.fit_transform(data['Humidity'])
+data['Wind'] = label_encoder.fit_transform(data['Wind'])
+data['Outlook'] = label_encoder.fit_transform(data['Outlook'])
+data['PlayTennis'] = label_encoder.fit_transform(data['PlayTennis'])
+X = data.drop('PlayTennis', axis=1) 
+y = data['PlayTennis'] 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
+random_state=42)
+model = GaussianNB()
+model.fit(X_train, y_train) 
+y_pred = model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print(f'Accuracy of the Naive Bayes model: {accuracy * 100:.2f}%')
+sample = pd.DataFrame({'Temperature': [label_encoder.transform(['Mild'])[0]],
+'Humidity': [label_encoder.transform(['High'])[0]],
+'Wind': [label_encoder.transform(['Weak'])[0]],
+'Outlook': [label_encoder.transform(['Sunny'])[0]]})
+prediction = model.predict(sample)
+prediction_label = label_encoder.inverse_transform(prediction)
+print(f'Prediction for the sample: {prediction_label[0]}')

@@ -1,0 +1,51 @@
+Q.1. Write a python program to implement simple Linear Regression for predicting
+house price.
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+df = pd.read_csv('house_prices.csv')
+print(df.isnull().sum())
+df = df.dropna()
+X = df[['Size']] 
+y = df['Price'] 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
+random_state=42)
+model = LinearRegression()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+print(f"Mean Squared Error: {mse}")
+print(f"R-squared: {r2}")
+plt.scatter(X_test, y_test, color='blue', label='Actual Prices')
+plt.plot(X_test, y_pred, color='red', label='Regression Line')
+plt.xlabel('Size of House (in sq ft)')
+plt.ylabel('Price of House (in dollars)')
+plt.title('Simple Linear Regression for House Price Prediction')
+plt.legend()
+plt.show()
+predicted_price = model.predict([[1500]])
+print(f"The predicted price for a 1500 sq ft house is ${predicted_price[0]:,.2f}")
+
+Q.2. Use Apriori algorithm on groceries dataset to find which items are brought
+together. Use minimum support =0.25
+import pandas as pd
+from mlxtend.frequent_patterns import apriori, association_rules
+data = {
+    'Bread': [1, 1, 0, 1, 0],
+    'Milk': [1, 0, 1, 1, 1],
+    'Butter': [0, 1, 0, 1, 0],
+    'Eggs': [1, 1, 1, 0, 0],
+    'Cheese': [0, 1, 1, 1, 0]
+}
+transactions = pd.DataFrame(data)
+frequent_itemsets = apriori(transactions, min_support=0.25, use_colnames=True)
+print("Frequent itemsets with minimum support of 0.25:")
+print(frequent_itemsets)
+rules = association_rules(frequent_itemsets, metric="lift", min_threshold=1)
+print("\nAssociation rules based on lift:")
+print(rules)

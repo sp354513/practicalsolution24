@@ -1,277 +1,77 @@
-Q.1 Write a Java Program to implement Factory method for Pizza Store with createPizza(),
-orederPizza(), prepare(), Bake(), cut(), box(). Use this to create variety of pizza’s like
-NyStyleCheesePizza, ChicagoStyleCheesePizza etc
-Java Program to Implement the Factory Method Pattern:
-1. Pizza Class (Abstract Base Class)
-This class defines the methods that all pizzas will share.
-java
-Copy code
-public abstract class Pizza {
- protected String name;
- // Common pizza methods that all pizza types will use
- public void prepare() {
- System.out.println("Preparing " + name);
- }
- public void bake() {
- System.out.println("Baking " + name);
- }
- public void cut() {
- System.out.println("Cutting " + name);
- }
- public void box() {
- System.out.println("Boxing " + name);
- }
- // Get pizza name
- public String getName() {
- return name;
- }
-}
-2. Concrete Pizza Classes
-Each of these classes represents a different style of pizza.
-NYStyleCheesePizza Class:
-java
-Copy code
-public class NYStyleCheesePizza extends Pizza {
- public NYStyleCheesePizza() {
- name = "New York Style Cheese Pizza";
- }
-}
-ChicagoStyleCheesePizza Class:
-java
-Copy code
-public class ChicagoStyleCheesePizza extends Pizza {
- public ChicagoStyleCheesePizza() {
- name = "Chicago Style Cheese Pizza";
- }
-}
-3. PizzaStore Class (Factory Method)
-The PizzaStore class will define the abstract method createPizza() that must be implemented
-by subclasses to return the specific type of pizza.
-java
-Copy code
-public abstract class PizzaStore {
- // Factory Method
- public Pizza orderPizza(String type) {
- Pizza pizza;
- pizza = createPizza(type); // Create pizza based on the type
- pizza.prepare(); // Prepare the pizza
- pizza.bake(); // Bake the pizza
- pizza.cut(); // Cut the pizza
- pizza.box(); // Box the pizza
- return pizza;
- }
- // Abstract Factory Method, to be implemented by concrete stores
- protected abstract Pizza createPizza(String type);
-}
-4. Concrete Pizza Stores
-Each store subclass will implement the createPizza() method, which will return the
-appropriate pizza based on the input type.
-NYPizzaStore Class:
-java
-Copy code
-public class NYPizzaStore extends PizzaStore {
- @Override
- protected Pizza createPizza(String type) {
- Pizza pizza = null;
- if (type.equals("cheese")) {
- pizza = new NYStyleCheesePizza();
- }
- // Add more types here if necessary, like "veggie", "clam", etc.
- return pizza;
- }
-}
-ChicagoPizzaStore Class:
-java
-Copy code
-public class ChicagoPizzaStore extends PizzaStore {
- @Override
- protected Pizza createPizza(String type) {
- Pizza pizza = null;
- if (type.equals("cheese")) {
- pizza = new ChicagoStyleCheesePizza();
- }
- // Add more types here if necessary, like "veggie", "clam", etc.
- return pizza;
- }
-}
-5. Main Class to Test the Program
-In the PizzaTestDrive class, we will create instances of different pizza stores and order pizzas.
-java
-Copy code
-public class PizzaTestDrive {
- public static void main(String[] args) {
- // Create a New York Pizza Store
- PizzaStore nyStore = new NYPizzaStore();
- // Order a Cheese Pizza from NY Pizza Store
- Pizza pizza = nyStore.orderPizza("cheese");
- System.out.println("Ethan ordered a " + pizza.getName() + "\n");
- // Create a Chicago Pizza Store
- PizzaStore chicagoStore = new ChicagoPizzaStore();
- // Order a Cheese Pizza from Chicago Pizza Store
- pizza = chicagoStore.orderPizza("cheese");
- System.out.println("Joel ordered a " + pizza.getName() + "\n");
- }
-}
-Output:
-mathematica
-Copy code
-Preparing New York Style Cheese Pizza
-Baking New York Style Cheese Pizza
-Cutting New York Style Cheese Pizza
-Boxing New York Style Cheese Pizza
-Ethan ordered a New York Style Cheese Pizza
-Preparing Chicago Style Cheese Pizza
-Baking Chicago Style Cheese Pizza
-Cutting Chicago Style Cheese Pizza
-Boxing Chicago Style Cheese Pizza
-Joel ordered a Chicago Style Cheese Pizza
+Q.1. Fit the simple linear regression and polynomial linear regression models to
+Salary_positions.csv data. Find which one is more accurately fitting to the given data.
+Also predict the salaries of level 11 and level 12 employees
 
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.metrics import mean_squared_error
+df = pd.read_csv('Salary_positions.csv') 
+directory
+X = df['Position Level'].values.reshape(-1, 1) 
+y = df['Salary'].values 
+simple_linear_reg = LinearRegression()
+simple_linear_reg.fit(X, y)
+poly = PolynomialFeatures(degree=4) 
+X_poly = poly.fit_transform(X)
+poly_linear_reg = LinearRegression()
+poly_linear_reg.fit(X_poly, y)
+y_pred_simple = simple_linear_reg.predict(X)
+y_pred_poly = poly_linear_reg.predict(X_poly)
+mse_simple = mean_squared_error(y, y_pred_simple)
+mse_poly = mean_squared_error(y, y_pred_poly)
+print(f"Mean Squared Error for Simple Linear Regression: {mse_simple}")
+print(f"Mean Squared Error for Polynomial Linear Regression: {mse_poly}")
+level_11 = np.array([[11]])
+level_12 = np.array([[12]])
+salary_11_simple = simple_linear_reg.predict(level_11)
+salary_12_simple = simple_linear_reg.predict(level_12)
+salary_11_poly = poly_linear_reg.predict(poly.transform(level_11))
+salary_12_poly = poly_linear_reg.predict(poly.transform(level_12))
+print(f"Predicted Salary for Level 11 (Simple Linear Regression):
+{salary_11_simple[0]}")
+print(f"Predicted Salary for Level 12 (Simple Linear Regression):
+{salary_12_simple[0]}")
+print(f"Predicted Salary for Level 11 (Polynomial Linear Regression):
+{salary_11_poly[0]}")
+print(f"Predicted Salary for Level 12 (Polynomial Linear Regression):
+{salary_12_poly[0]}")
+plt.scatter(X, y, color='blue')
+plt.plot(X, y_pred_simple, color='red')
+plt.title('Simple Linear Regression')
+plt.xlabel('Position Level')
+plt.ylabel('Salary')
+plt.show()
+plt.scatter(X, y, color='blue')
+X_grid = np.arange(min(X), max(X), 0.1) 
+X_grid = X_grid.reshape((len(X_grid), 1))
+plt.plot(X_grid, poly_linear_reg.predict(poly.transform(X_grid)), color='red')
+plt.title('Polynomial Linear Regression')
+plt.xlabel('Position Level')
+plt.ylabel('Salary')
+plt.show()
 
+Q.2. Write a python program to implement Naive Bayes on weather forecast dataset.
 
-
-
-Q.2 Start Raspberry Pi and Execute various Linux commands in command terminal window: ls,
-cd, touch, mv, rm, man, mkdir, rmdir, tar, gzip, cat, more, less, ps, sudo, cron, chown, chgrp,
-pingetc.
-Step 1: Start Raspberry Pi
-1. Power on the Raspberry Pi.
-2. Make sure it is connected to a monitor, keyboard, and mouse. Alternatively, you can
-connect to the Raspberry Pi using SSH if it is connected to your local network.
-Step 2: Open the Command Terminal
-Once the Raspberry Pi boots up:
- If you're using a GUI interface, open the Terminal by clicking on the Terminal icon or
-pressing Ctrl + Alt + T.
- If you're using SSH, open your SSH client (e.g., PuTTY) and connect to your Raspberry
-Pi by using its IP address and login credentials.
-Step 3: Execute the Various Linux Commands
-Here is a list of common Linux commands and their usage. Execute these commands one by
-one in the terminal window.
-1. ls – List directory contents
-bash
-Copy code
-ls
-This will list all the files and directories in the current working directory.
-2. cd – Change directory
-bash
-Copy code
-cd /path/to/directory
-Use this command to navigate to a different directory. Replace /path/to/directory with the
-actual path.
-3. touch – Create an empty file
-bash
-Copy code
-touch myfile.txt
-This will create a new empty file called myfile.txt in the current directory.
-4. mv – Move or rename files
-bash
-Copy code
-mv myfile.txt /path/to/new/directory
-This will move the file myfile.txt to the new directory. You can also use this command to
-rename files:
-bash
-Copy code
-mv oldname.txt newname.txt
-5. rm – Remove files or directories
-bash
-Copy code
-rm myfile.txt
-This will delete the file myfile.txt.
-To delete a directory (and its contents):
-bash
-Copy code
-rm -r mydirectory
-6. man – View manual for commands
-bash
-Copy code
-man ls
-This will display the manual page for the ls command. You can exit the manual by pressing q.
-7. mkdir – Create a directory
-bash
-Copy code
-mkdir mydirectory
-This will create a new directory called mydirectory.
-8. rmdir – Remove an empty directory
-bash
-Copy code
-rmdir mydirectory
-This will remove an empty directory called mydirectory.
-9. tar – Archive files
-bash
-Copy code
-tar -cvf archive.tar directory
-This will create an archive called archive.tar of the specified directory. The options used:
- -c: Create a new archive.
- -v: Verbose mode (shows files being archived).
- -f: Specifies the archive file name.
-To extract the archive:
-bash
-Copy code
-tar -xvf archive.tar
-10. gzip – Compress files
-bash
-Copy code
-gzip myfile.txt
-This will compress the file myfile.txt into myfile.txt.gz.
-To decompress a .gz file:
-bash
-Copy code
-gzip -d myfile.txt.gz
-11. cat – Concatenate and display file content
-bash
-Copy code
-cat myfile.txt
-This will display the contents of myfile.txt on the terminal.
-12. more – View file contents page by page
-bash
-Copy code
-more myfile.txt
-This will allow you to view the contents of myfile.txt one page at a time.
-13. less – View file contents interactively
-bash
-Copy code
-less myfile.txt
-This is similar to more, but allows you to scroll up and down interactively.
-14. ps – Display running processes
-bash
-Copy code
-ps aux
-This will show a list of all running processes. ps aux displays all processes, including those
-from other users.
-15. sudo – Execute commands with root privileges
-bash
-Copy code
-sudo apt update
-This command updates the package list on your Raspberry Pi. sudo is used to execute commands
-with elevated privileges.
-16. cron – Schedule tasks to run at specified times
-bash
-Copy code
-crontab -e
-This will open the cron jobs editor. You can use it to schedule tasks to run at specific times. A
-cron job entry might look like this:
-bash
-Copy code
-0 5 * * * /path/to/script.sh
-This would run /path/to/script.sh every day at 5:00 AM.
-17. chown – Change file owner and group
-bash
-Copy code
-sudo chown pi:pi myfile.txt
-This will change the owner and group of myfile.txt to pi.
-18. chgrp – Change group ownership
-bash
-Copy code
-sudo chgrp pi myfile.txt
-This will change the group ownership of myfile.txt to pi.
-19. ping – Send ICMP Echo Request
-bash
-Copy code
-ping google.com
-This will send a ping request to google.com to check the network connectivity. To stop the ping
-process, press Ctrl+C.
-20. etc – Directory for configuration files
-In Linux, /etc is a directory that holds configuration files for the system. You can list files
-in /etc with:
-bash
-Copy code
-ls /etc
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score, classification_report
+'Wind', and target 'Rain'
+df = pd.read_csv('weather_forecast.csv')
+print(df.isnull().sum())
+and 0 (No)
+df['Rain'] = df['Rain'].map({'Yes': 1, 'No': 0})
+X = df.drop('Rain', axis=1) 
+y = df['Rain'] 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3,
+random_state=42)
+nb_model = GaussianNB()
+nb_model.fit(X_train, y_train)
+y_pred = nb_model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy * 100:.2f}%")
+print("Classification Report:")
+print(classification_report(y_test, y_pred))

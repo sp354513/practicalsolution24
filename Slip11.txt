@@ -1,194 +1,60 @@
-Q.1 Write a java program to implement Adapter pattern to design Heart Model to Beat Model
-Step-by-Step Solution:
-Step 1: Define the BeatMode Interface
-This will be the interface that we want to adapt the HeartModel to.
-java
-Copy code
-public interface BeatMode {
- void beat();
-}
-Step 2: Define the HeartModel Class
-This class represents the heart and has its own way of beating.
-java
-Copy code
-public class HeartModel {
- // HeartModel's internal beat method
- public void startBeating() {
- System.out.println("Heart is beating...");
- }
-}
-Step 3: Create the HeartAdapter Class
-The HeartAdapter will adapt the HeartModel to the BeatMode interface.
-java
-Copy code
-public class HeartAdapter implements BeatMode {
- private HeartModel heartModel;
- // Constructor that takes the HeartModel instance
- public HeartAdapter(HeartModel heartModel) {
- this.heartModel = heartModel;
- }
- // Implement the beat method to call the HeartModel's startBeating
- @Override
- public void beat() {
- heartModel.startBeating();
- }
-}
-Step 4: Create the Client Code to Test the Adapter
-The client will use the BeatMode interface without knowing about the
-underlying HeartModel class.
-java
-Copy code
-public class HeartClient {
- public static void main(String[] args) {
- // Create a HeartModel object
- HeartModel heart = new HeartModel();
- // Create a HeartAdapter that adapts the HeartModel to the BeatMode
-interface
- BeatMode beatMode = new HeartAdapter(heart);
- // Use the beat method via the BeatMode interface
- beatMode.beat();
- }
-}
-Explanation:
-1. BeatMode Interface: This is the target interface that defines the method beat(). The
-client code expects objects of this type to perform the beating action.
-2. HeartModel Class: This is the existing class with a method startBeating() that is not
-compatible with the BeatMode interface. It represents a heart in a specific mode that
-beats.
-3. HeartAdapter Class: This class acts as the adapter. It takes an instance
-of HeartModel and delegates the beat() method call to the startBeating() method
-of HeartModel. This makes the HeartModel compatible with the BeatMode interface.
-4. HeartClient: This is the client code that uses the BeatMode interface without knowing
-the underlying implementation. It works with the HeartAdapter to interact with
-the HeartModel.
+Q.1. Write a python program to implement Polynomial Regression for Boston
+Housing Dataset
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_boston
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.metrics import mean_squared_error, r2_score
+boston = load_boston()
+X = boston.data 
+y = boston.target 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
+random_state=42)
+degree = 2 
+poly = PolynomialFeatures(degree=degree)
+X_train_poly = poly.fit_transform(X_train)
+X_test_poly = poly.transform(X_test)
+model = LinearRegression()
+model.fit(X_train_poly, y_train)
+y_pred = model.predict(X_test_poly)
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+print(f'Mean Squared Error (MSE): {mse}')
+print(f'R-Squared: {r2}')
+plt.scatter(y_test, y_pred)
+plt.xlabel('True Values (Prices)')
+plt.ylabel('Predicted Values (Prices)')
+plt.title('Polynomial Regression: Predicted vs Actual')
+plt.show()
 
 
+Q.2. Write a python program to Implement Decision Tree classifier model on Data
+which is extracted from images that were taken from genuine and forged banknotelike specimens. (refer UCI dataset
+https://archive.ics.uci.edu/dataset/267/banknote+authentication)
 
 
-Q.2 Run some python programs on Pi like a) Light an LED through Python program b) Get input
-from two switches and switch on corresponding LEDs c) Flash an LED at a given on time and
-off time cycle, where the two times are taken from a file
-Setup:
-Before running these programs, ensure you have:
- The GPIO library installed. You can install it using:
-bash
-Copy code
-sudo apt-get install python3-rpi.gpio
- Proper connections for LEDs and switches. You can use a breadboard to connect the
-GPIO pins to LEDs and switches, ensuring you know which GPIO pins are connected to
-them.
-a) Light an LED Through Python Program
-This program will turn on an LED connected to a GPIO pin (e.g., GPIO17) when the program
-runs.
-python
-Copy code
-import RPi.GPIO as GPIO
-import time
-# Set up GPIO
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
-# Set GPIO pin 17 as output (LED pin)
-LED_PIN = 17
-GPIO.setup(LED_PIN, GPIO.OUT)
-# Turn on the LED
-GPIO.output(LED_PIN, GPIO.HIGH)
-print("LED is ON")
-# Wait for 5 seconds
-time.sleep(5)
-# Turn off the LED
-GPIO.output(LED_PIN, GPIO.LOW)
-print("LED is OFF")
-# Clean up GPIO settings
-GPIO.cleanup()
-Explanation:
- This program uses GPIO pin 17 to control the LED.
- It turns the LED on for 5 seconds, then turns it off.
- The GPIO.cleanup() ensures that the GPIO settings are cleared when the program ends.
-b) Get Input from Two Switches and Switch On Corresponding LEDs
-This program will read input from two switches and turn on the corresponding LEDs based on
-the state of the switches.
-python
-Copy code
-import RPi.GPIO as GPIO
-import time
-# Set up GPIO
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
-# Define GPIO pins for switches and LEDs
-SWITCH1_PIN = 18
-SWITCH2_PIN = 23
-LED1_PIN = 17
-LED2_PIN = 24
-# Set up the switches as inputs and LEDs as outputs
-GPIO.setup(SWITCH1_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(SWITCH2_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(LED1_PIN, GPIO.OUT)
-GPIO.setup(LED2_PIN, GPIO.OUT)
-try:
- while True:
- # Read switch states
- switch1_state = GPIO.input(SWITCH1_PIN)
- switch2_state = GPIO.input(SWITCH2_PIN)
- # Control LEDs based on switch states
- if switch1_state == GPIO.LOW: # Button pressed (active low)
- GPIO.output(LED1_PIN, GPIO.HIGH)
- else:
- GPIO.output(LED1_PIN, GPIO.LOW)
- if switch2_state == GPIO.LOW:
- GPIO.output(LED2_PIN, GPIO.HIGH)
- else:
- GPIO.output(LED2_PIN, GPIO.LOW)
- time.sleep(0.1) # Debounce delay
-except KeyboardInterrupt:
- print("Program terminated")
-finally:
- # Clean up GPIO settings
- GPIO.cleanup()
-Explanation:
- The program monitors two switches (connected to GPIO pins 18 and 23) and two LEDs
-(connected to GPIO pins 17 and 24).
- If a switch is pressed (input is LOW), the corresponding LED will turn on. If the switch is
-not pressed (HIGH), the LED will turn off.
- The program continues to monitor the switches in a loop, and a try-except block is used
-to cleanly handle the program termination (e.g., via Ctrl+C).
-c) Flash an LED at a Given On Time and Off Time Cycle, Where the Two Times
-Are Taken from a File
-This program will read on and off times from a file (e.g., times.txt) and flash an LED based on
-those times.
-Sample File (times.txt):
-Copy code
-2
-1
-This means the LED will stay on for 2 seconds and off for 1 second.
-python
-Copy code
-import RPi.GPIO as GPIO
-import time
-# Set up GPIO
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
-# Set GPIO pin for the LED
-LED_PIN = 17
-GPIO.setup(LED_PIN, GPIO.OUT)
-# Read on and off times from a file
-try:
- with open('times.txt', 'r') as file:
- on_time = float(file.readline().strip()) # Read the 'on' time
- off_time = float(file.readline().strip()) # Read the 'off' time
-except FileNotFoundError:
- print("Error: times.txt file not found!")
- GPIO.cleanup()
- exit()
-# Flash the LED based on the times read from the file
-try:
- while True:
- GPIO.output(LED_PIN, GPIO.HIGH) # Turn on the LED
- print(f"LED ON for {on_time} seconds")
- time.sleep(on_time) # Wait for 'on' time
- GPIO.output(LED_PIN, GPIO.LOW) # Turn off the LED
- print(f"LED OFF for {off_time} seconds")
- time.sleep(off_time) # Wait for 'off' time
-except KeyboardInterrupt:
- print("Program terminated")
-finally:
- GPIO.cleanup()
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score, classification_report
+import urllib.request
+url = "https://archive.ics.uci.edu/ml/machine-learning-databases/00267/data.csv"
+filename = "banknote-authentication.csv"
+urllib.request.urlretrieve(url, filename)
+df = pd.read_csv(filename, header=None)
+df.columns = ['Variance', 'Skewness', 'Curtosis', 'Entropy', 'Class']
+X = df.drop(columns='Class') 
+y = df['Class'] 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
+random_state=42)
+model = DecisionTreeClassifier(random_state=42)
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print(f'Accuracy: {accuracy:.2f}')
+print("Classification Report:")
+print(classification_report(y_test, y_pred))

@@ -1,0 +1,72 @@
+Q.1. Create KNN model on Indian diabetes patient’s database and predict whether a
+new patient is diabetic (1) or not (0). Find optimal value of K.
+
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import classification_report, confusion_matrix
+import matplotlib.pyplot as plt
+url = 'https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indiansdiabetes.data.csv'
+columns = ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', 'Insulin',
+'BMI', 'DiabetesPedigreeFunction', 'Age', 'Outcome']
+data = pd.read_csv(url, header=None, names=columns)
+data.replace(0, np.nan, inplace=True)
+data.fillna(data.mean(), inplace=True)
+X = data.drop('Outcome', axis=1)
+y = data['Outcome']
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2,
+random_state=42)
+def optimal_k(X_train, X_test, y_train, y_test):
+accuracies = []
+for k in range(1, 21): 
+knn = KNeighborsClassifier(n_neighbors=k)
+knn.fit(X_train, y_train)
+accuracy = knn.score(X_test, y_test)
+accuracies.appe
+plt.plot(range(1, 21), accuracies, marker='o')
+plt.xlabel('Value of K')
+plt.ylabel('Accuracy')
+plt.title('Accuracy vs K')
+plt.show()
+optimal_k = accuracies.index(max(accuracies)) + 1
+return optimal_k, max(accuracies)
+optimal_k_value, max_accuracy = optimal_k(X_train, X_test, y_train, y_test)
+print(f"Optimal value of K: {optimal_k_value} with accuracy: {max_accuracy}")
+knn_optimal = KNeighborsClassifier(n_neighbors=optimal_k_value)
+knn_optimal.fit(X_train, y_train)
+y_pred = knn_optimal.predict(X_test)
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred))
+
+Q.2. Use Apriori algorithm on groceries dataset to find which items are brought
+together. Use minimum support =0.25
+
+import pandas as pd
+from mlxtend.frequent_patterns import apriori, association_rules
+
+data = {'TransactionID': [1, 2, 3, 4, 5, 6],
+'Items': [['Milk', 'Eggs', 'Bread'],
+['Milk', 'Diaper', 'Beer', 'Eggs'],
+['Bread', 'Milk', 'Diaper', 'Beer'],
+['Milk', 'Eggs', 'Bread', 'Diaper'],
+['Milk', 'Bread', 'Diaper', 'Beer'],
+['Eggs', 'Bread', 'Beer']]}
+groceries_df = pd.DataFrame(data)
+all_items = list(set([item for sublist in groceries_df['Items'] for item in sublist]))
+basket = pd.DataFrame(0, index=groceries_df['TransactionID'], columns=all_items)
+for idx, row in groceries_df.iterrows():
+for item in row['Items']:
+basket.at[idx, item] = 1
+least 25% of the transactions
+frequent_itemsets = apriori(basket, min_support=0.25, use_colnames=True)
+rules = association_rules(frequent_itemsets, metric="lift", min_threshold=1)
+print("Frequent Itemsets:")
+print(frequent_itemsets)
+print("\nAssociation Rules:")
+print(rules)

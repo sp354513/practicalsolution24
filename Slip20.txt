@@ -1,153 +1,72 @@
-Q.1 Write a Java Program to implement I/O Decorator for converting uppercase letters to lower
-case letters
-Steps:
-1. InputStream: We will use InputStream or Reader as the base interface for reading
-data.
-2. Decorator: We will create a decorator class that
-extends InputStreamReader or BufferedReader, which will modify the input data
-(convert it to lowercase) while reading.
-3. Concrete Component: The concrete class will read input normally.
-4. Client: The client will use the decorator to read the input with modified behavior (in this
-case, converting all uppercase letters to lowercase).
-Java Program:
-1. I/O Decorator Pattern for Lowercase Conversion
-java
-Copy code
-import java.io.*;
-public class LowerCaseInputStream extends FilterInputStream {
- // Constructor that passes the input stream to the super class
- public LowerCaseInputStream(InputStream in) {
- super(in);
- }
- // Override the read() method to convert characters to lowercase
- @Override
- public int read() throws IOException {
- int character = super.read(); // Read a byte
- if (character == -1) {
- return -1; // End of stream
- }
- return Character.toLowerCase((char) character); // Convert to
-lowercase
- }
- // Override the read() method that reads a portion of the input stream
- @Override
- public int read(byte[] b, int off, int len) throws IOException {
- int bytesRead = super.read(b, off, len); // Read the bytes into the
-array
- if (bytesRead == -1) {
- return -1; // End of stream
- }
+Q.1. Implement Ridge Regression, Lasso regression model using boston_houses.csv
+and take only ‘RM’ and ‘Price’ of the houses. divide the data as training and testing
+data. Fit line using Ridge regression and to find price of a house if it contains 5 rooms.
+and compare results
 
- // Convert all the characters in the byte array to lowercase
- for (int i = 0; i < bytesRead; i++) {
- b[off + i] = (byte) Character.toLowerCase((char) b[off + i]);
- }
- return bytesRead;
- }
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import Ridge, Lasso
+from sklearn.metrics import mean_squared_error
+df = pd.read_csv('boston_houses.csv') 
+df = df[['RM', 'Price']] 
+X = df[['RM']] 
+y = df['Price'] 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
+random_state=42)
+ridge = Ridge(alpha=1.0) 
+ridge.fit(X_train, y_train)
+lasso = Lasso(alpha=0.1)
+lasso.fit(X_train, y_train)
+rooms = np.array([[5]]) 
+ridge_pred = ridge.predict(rooms)
+lasso_pred = lasso.predict(rooms)
+print(f"Ridge Regression Prediction for 5 rooms: ${ridge_pred[0]:.2f}")
+print(f"Lasso Regression Prediction for 5 rooms: ${lasso_pred[0]:.2f}")
+ridge_test_pred = ridge.predict(X_test)
+lasso_test_pred = lasso.predict(X_test)
+ridge_mse = mean_squared_error(y_test, ridge_test_pred)
+lasso_mse = mean_squared_error(y_test, lasso_test_pred)
+print(f"Ridge Regression MSE on Test Data: {ridge_mse:.2f}")
+print(f"Lasso Regression MSE on Test Data: {lasso_mse:.2f}")
+
+Q.2. Write a python program to implement Decision Tree whether or not to play
+Tennis.
+
+import pandas as pd
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import LabelEncoder
+data = {
+'Outlook': ['Sunny', 'Sunny', 'Overcast', 'Rain', 'Rain', 'Rain', 'Overcast', 'Sunny',
+'Sunny', 'Rain', 'Sunny', 'Overcast', 'Overcast', 'Rain'],
+'Temperature': ['Hot', 'Hot', 'Hot', 'Mild', 'Cool', 'Cool', 'Cool', 'Mild', 'Mild', 'Mild',
+'Hot', 'Mild', 'Mild', 'Mild'],
+'Humidity': ['High', 'High', 'High', 'High', 'Normal', 'Normal', 'Normal', 'High',
+'Normal', 'Normal', 'High', 'Normal', 'Normal', 'High'],
+'Wind': ['Weak', 'Strong', 'Weak', 'Weak', 'Weak', 'Strong', 'Strong', 'Weak', 'Weak',
+'Weak', 'Weak', 'Weak', 'Strong', 'Strong'],
+'PlayTennis': ['No', 'No', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 'No', 'Yes', 'Yes', 'Yes', 'Yes',
+'Yes', 'No']
 }
-2. Test Class for Using the Lowercase Decorator
-java
-Copy code
-import java.io.*;
-public class IOTest {
- public static void main(String[] args) {
- String input = "Hello World! This is a TEST message.";
- // Creating a ByteArrayInputStream to simulate user input (as if
-typed in the console)
- ByteArrayInputStream byteArrayInputStream = new
-ByteArrayInputStream(input.getBytes());
- // Wrap the byte array input stream with our custom
-LowerCaseInputStream
- LowerCaseInputStream lowerCaseInputStream = new
-LowerCaseInputStream(byteArrayInputStream);
- // Read the data from the lower case input stream
- try {
- int character;
- while ((character = lowerCaseInputStream.read()) != -1) {
- System.out.print((char) character); // Print the character
-in lowercase
- }
- } catch (IOException e) {
- e.printStackTrace();
- }
- }
-}
-
-
-
-
-
-Q.2 Write python programs on Pi like:
-a) Read your name and print Hello message with name
-b) Read two numbers and print their sum, difference, product and division.
-c) Word and character count of a given string.
-d) Area of a given shape (rectangle, triangle and circle) reading shape and
-appropriate
-values from standard input.
-a) Read your name and print Hello message with name
-python
-Copy code
-# Program to read your name and print a hello message
-name = input("Enter your name: ")
-print(f"Hello, {name}!")
- This program prompts the user to input their name and then prints a
-greeting message using the input name.
-b) Read two numbers and print their sum, difference,
-product, and division
-python
-Copy code
-# Program to read two numbers and print their sum, difference, product, and
-division
-num1 = float(input("Enter the first number: "))
-num2 = float(input("Enter the second number: "))
-sum_result = num1 + num2
-difference_result = num1 - num2
-product_result = num1 * num2
-# Checking if division by zero occurs
-if num2 != 0:
- division_result = num1 / num2
-else:
- division_result = "Undefined (division by zero)"
-print(f"Sum: {sum_result}")
-print(f"Difference: {difference_result}")
-print(f"Product: {product_result}")
-print(f"Division: {division_result}")
- This program takes two numbers as input and prints their sum,
-difference, product, and division. It also checks for division by zero.
-c) Word and character count of a given string
-python
-Copy code
-# Program to count the words and characters in a given string
-input_string = input("Enter a string: ")
-# Count characters (excluding spaces)
-char_count = len(input_string.replace(" ", ""))
-# Count words (splitting by spaces)
-word_count = len(input_string.split())
-print(f"Word count: {word_count}")
-print(f"Character count (excluding spaces): {char_count}")
- This program counts the number of words and characters (excluding
-spaces) in the given string. The string is split by spaces to count the
-words, and spaces are removed to count the characters.
-d) Area of a given shape (rectangle, triangle, and
-circle) reading shape and appropriate values from
-standard input
-python
-Copy code
-# Program to calculate the area of a given shape
-shape = input("Enter the shape (rectangle, triangle, or circle): ").lower()
-if shape == "rectangle":
- length = float(input("Enter the length: "))
- width = float(input("Enter the width: "))
- area = length * width
- print(f"Area of the rectangle: {area}")
-elif shape == "triangle":
- base = float(input("Enter the base: "))
- height = float(input("Enter the height: "))
- area = 0.5 * base * height
- print(f"Area of the triangle: {area}")
-elif shape == "circle":
- radius = float(input("Enter the radius: "))
- area = 3.14159 * radius * radius
- print(f"Area of the circle: {area}")
-else:
- print("Invalid shape entered!")
+df = pd.DataFrame(data)
+encoder = LabelEncoder()
+df['Outlook'] = encoder.fit_transform(df['Outlook'])
+df['Temperature'] = encoder.fit_transform(df['Temperature'])
+df['Humidity'] = encoder.fit_transform(df['Humidity'])
+df['Wind'] = encoder.fit_transform(df['Wind'])
+df['PlayTennis'] = encoder.fit_transform(df['PlayTennis'])
+X = df.drop('PlayTennis', axis=1) 
+y = df['PlayTennis'] 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
+random_state=42)
+dtree = DecisionTreeClassifier()
+dtree.fit(X_train, y_train)
+y_pred = dtree.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print(f'Accuracy of Decision Tree Model: {accuracy * 100:.2f}%')
+from sklearn.tree import export_text
+tree_rules = export_text(dtree, feature_names=list(X.columns))
+print("\nDecision Tree Rules:\n")
+print(tree_rules)

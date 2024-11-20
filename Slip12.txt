@@ -1,140 +1,81 @@
-Q.1 Write a Java Program to implement Decorator Pattern for interface Car to define the
-assemble() method and then decorate it to Sports car and Luxury Car
-Step-by-Step Solution:
-Step 1: Define the Car Interface
-This interface will have a single method assemble().
-java
-Copy code
-public interface Car {
- void assemble();
-}
-Step 2: Concrete Implementation of Car — Basic Car
-java
-Copy code
-public class BasicCar implements Car {
- @Override
- public void assemble() {
- System.out.println("Basic Car.");
- }
-}
-Step 3: Decorator Class — CarDecorator
-This will be a base class for all decorators. It implements the Car interface and wraps
-a Car object.
-java
-Copy code
-public class CarDecorator implements Car {
- protected Car decoratedCar;
- public CarDecorator(Car car) {
- this.decoratedCar = car;
- }
- @Override
- public void assemble() {
- this.decoratedCar.assemble();
- }
-}
-Step 4: SportsCar Decorator
-This decorator class will add additional features specific to a sports car.
-java
-Copy code
-public class SportsCar extends CarDecorator {
- public SportsCar(Car car) {
- super(car);
- }
- @Override
- public void assemble() {
- super.assemble(); // Call the base assemble method
- System.out.println("Adding features of Sports Car.");
- }
-}
-Step 5: LuxuryCar Decorator
-This decorator class will add additional features specific to a luxury car.
-java
-Copy code
-public class LuxuryCar extends CarDecorator {
- public LuxuryCar(Car car) {
- super(car);
- }
- @Override
- public void assemble() {
- super.assemble(); // Call the base assemble method
- System.out.println("Adding features of Luxury Car.");
- }
-}
-Step 6: Client Code — Testing the Decorator Pattern
-The client will create a basic car and then dynamically decorate it with different features.
-java
-Copy code
-public class DecoratorPatternTest {
- public static void main(String[] args) {
- // Create a basic car
- Car sportsCar = new SportsCar(new BasicCar());
- sportsCar.assemble();
- System.out.println("\n*****");
- // Create a luxury sports car
- Car sportsLuxuryCar = new LuxuryCar(new SportsCar(new BasicCar()));
- sportsLuxuryCar.assemble();
- }
-}
+Q.1. Write a python program to implement k-nearest Neighbors ML algorithm to
+build prediction model (Use iris Dataset)
 
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.datasets import load_iris
+from sklearn.metrics import accuracy_score, classification_report
+iris = load_iris()
+X = iris.data 
+width
+y = iris.target
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3,
+random_state=42)
+k = 3 
+knn = KNeighborsClassifier(n_neighbors=k)
+knn.fit(X_train, y_train)
+y_pred = knn.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print(f'Accuracy: {accuracy:.2f}')
+print("Classification Report:")
+print(classification_report(y_test, y_pred, target_names=iris.target_names))
 
+Q.2. Fit the simple linear regression and polynomial linear regression models
+to
+Salary_positions.csv data. Find which one is more accurately fitting to the
+given
+data. Also predict the salaries of level 11 and level 12 employees
 
-
-
-Q.2 Write a program to sense the available networks using Arduino [15 M]
-#include <ESP8266WiFi.h> // Include the ESP8266 Wi-Fi library
-void setup() {
- // Start the Serial communication at 115200 baud rate
- Serial.begin(115200);
- // Connect to Wi-Fi (not necessary for scanning, but useful for testing)
- // WiFi.begin("your-SSID", "your-password");
-
- // Print a message to the Serial Monitor
- Serial.println("Scanning for Wi-Fi networks...");
- // Start the Wi-Fi scan
- int numberOfNetworks = WiFi.scanNetworks(); // Returns the number of
-networks found
- // Check if any networks were found
- if (numberOfNetworks == 0) {
- Serial.println("No networks found.");
- } else {
- Serial.print(numberOfNetworks);
- Serial.println(" networks found:");
- }
- // Loop through all the networks and print their details
- for (int i = 0; i < numberOfNetworks; i++) {
- // Print network SSID
- Serial.print(i + 1);
- Serial.print(": ");
- Serial.print(WiFi.SSID(i));
- // Print signal strength in dBm
- Serial.print(" Signal Strength (RSSI): ");
- Serial.print(WiFi.RSSI(i));
- Serial.println(" dBm");
- // Print encryption type (Security)
- Serial.print(" Encryption: ");
- switch (WiFi.encryptionType(i)) {
- case WIFI_AUTH_OPEN:
- Serial.println("Open");
- break;
- case WIFI_AUTH_WEP:
- Serial.println("WEP");
- break;
- case WIFI_AUTH_WPA_PSK:
- Serial.println("WPA-PSK");
- break;
- case WIFI_AUTH_WPA2_PSK:
- Serial.println("WPA2-PSK");
- break;
- case WIFI_AUTH_WPA_WPA2_PSK:
- Serial.println("WPA/WPA2-PSK");
- break;
- default:
- Serial.println("Unknown");
- break;
- }
- Serial.println(); // Print a newline for separation between networks
- }
-}
-void loop() {
- // The loop doesn't do anything in this case
-}
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.model_selection import train_test_split
+data = pd.read_csv('Salary_positions.csv')
+X = data['Position Level'].values.reshape(-1, 1) 
+y = data['Salary'].values 
+simple_lr = LinearRegression()
+simple_lr.fit(X, y)
+poly = PolynomialFeatures(degree=4)
+X_poly = poly.fit_transform(X)
+poly_lr = LinearRegression()
+poly_lr.fit(X_poly, y)
+y_pred_simple = simple_lr.predict(X)
+y_pred_poly = poly_lr.predict(X_poly)
+mse_simple = mean_squared_error(y, y_pred_simple)
+mse_poly = mean_squared_error(y, y_pred_poly)
+r2_simple = r2_score(y, y_pred_simple)
+r2_poly = r2_score(y, y_pred_poly)
+print(f"Simple Linear Regression MSE: {mse_simple:.2f}")
+print(f"Polynomial Linear Regression MSE: {mse_poly:.2f}")
+print(f"Simple Linear Regression R²: {r2_simple:.2f}")
+print(f"Polynomial Linear Regression R²: {r2_poly:.2f}")
+salary_11_simple = simple_lr.predict([[11]])
+Level 11
+salary_12_simple = simple_lr.predict([[12]]) 
+Level 12
+salary_11_poly = poly_lr.predict(poly.transform([[11]])) 
+Prediction for Level 11
+salary_12_poly = poly_lr.predict(poly.transform([[12]])) 
+Prediction for Level 12
+print(f"Predicted salary for level 11 (Simple LR):
+${salary_11_simple[0]:,.2f}")
+print(f"Predicted salary for level 12 (Simple LR):
+${salary_12_simple[0]:,.2f}")
+print(f"Predicted salary for level 11 (Polynomial LR):
+${salary_11_poly[0]:,.2f}")
+print(f"Predicted salary for level 12 (Polynomial LR):
+${salary_12_poly[0]:,.2f}")
+plt.scatter(X, y, color='red') 
+plt.plot(X, y_pred_simple, label='Linear Regression', color='blue')
+plt.plot(X, y_pred_poly, label='Polynomial Regression (degree 4)',
+color='green')
+plt.xlabel('Position Level')
+plt.ylabel('Salary')
+plt.title('Salary vs Position Level')
+plt.legend()
+plt.show()

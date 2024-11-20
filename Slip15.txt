@@ -1,148 +1,75 @@
-Q.1 Write a Java Program to implement Facade Design Pattern for Home Theater
-1. Subsystems (Components)
-java
-Copy code
-// TV Class (Subsystem)
-public class TV {
- public void on() {
- System.out.println("Turning on the TV.");
- }
- public void off() {
- System.out.println("Turning off the TV.");
- }
-}
-// SoundSystem Class (Subsystem)
-public class SoundSystem {
- public void on() {
- System.out.println("Turning on the sound system.");
- }
- public void off() {
- System.out.println("Turning off the sound system.");
- }
- public void setVolume(int volume) {
- System.out.println("Setting sound system volume to " + volume);
- }
-}
-// Lights Class (Subsystem)
-public class Lights {
- public void dim() {
- System.out.println("Dimming the lights.");
- }
- public void on() {
- System.out.println("Turning on the lights.");
- }
-}
-// DVDPlayer Class (Subsystem)
-public class DVDPlayer {
- public void on() {
- System.out.println("Turning on the DVD player.");
- }
- public void off() {
- System.out.println("Turning off the DVD player.");
- }
- public void play() {
- System.out.println("Playing the DVD.");
- }
- public void stop() {
- System.out.println("Stopping the DVD.");
- }
-}
-2. Facade Class
-java
-Copy code
-// HomeTheaterFacade Class (Facade)
-public class HomeTheaterFacade {
- private TV tv;
- private SoundSystem soundSystem;
- private Lights lights;
- private DVDPlayer dvdPlayer;
- public HomeTheaterFacade(TV tv, SoundSystem soundSystem, Lights lights,
-DVDPlayer dvdPlayer) {
- this.tv = tv;
- this.soundSystem = soundSystem;
- this.lights = lights;
- this.dvdPlayer = dvdPlayer;
- }
- public void watchMovie() {
- System.out.println("Get ready to watch a movie...");
- lights.dim();
- tv.on();
- soundSystem.on();
- soundSystem.setVolume(10);
- dvdPlayer.on();
- dvdPlayer.play();
- }
- public void endMovie() {
- System.out.println("Shutting down the movie...");
- dvdPlayer.stop();
- dvdPlayer.off();
- soundSystem.off();
- tv.off();
- lights.on();
- }
-}
-3. Client Code (Test)
-java
-Copy code
-// Client Code (Main)
-public class FacadePatternTest {
- public static void main(String[] args) {
- // Creating instances of subsystems (components)
- TV tv = new TV();
- SoundSystem soundSystem = new SoundSystem();
- Lights lights = new Lights();
- DVDPlayer dvdPlayer = new DVDPlayer();
- // Creating the facade
- HomeTheaterFacade homeTheater = new HomeTheaterFacade(tv,
-soundSystem, lights, dvdPlayer);
- // Using the facade to simplify the process of watching a movie
- homeTheater.watchMovie();
- System.out.println("\n--- Movie finished ---\n");
- // Using the facade to end the movie and turn off the systems
- homeTheater.endMovie();
- }
-}
-Explanation:
-1. Subsystem Classes: These classes (TV, SoundSystem, Lights, and DVDPlayer) represent
-the individual components of the home theater system. Each class has methods to control
-its respective functionality, such as turning on/off, adjusting volume, or playing a DVD.
-2. Facade Class (HomeTheaterFacade): This class provides a simplified interface to
-control all the components of the home theater system. It has methods
-like watchMovie() and endMovie() that internally call the appropriate methods on the
-subsystem objects. The facade hides the complexity of interacting with each component.
-3. Client Code: In the FacadePatternTest class, we create instances of the subsystems
-(TV, SoundSystem, Lights, and DVDPlayer) and pass them to the HomeTheaterFacade.
-The client can then simply call watchMovie() or endMovie() without needing to deal
-with the individual components of the system.
+Q.1. Create an ANN and train it on house price dataset classify the house price is
+above average or below average
 
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.datasets import load_boston
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.utils import to_categorical
+boston = load_boston()
+X = boston.data 
+y = boston.target 
+average_price = np.mean(y)
 
+y_class = np.where(y > average_price, 1, 0)
+X_train, X_test, y_train, y_test = train_test_split(X, y_class, test_size=0.2,
+random_state=42)
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+model = Sequential()
+model.add(Dense(64, input_dim=X_train.shape[1], activation='relu'))
+model.add(Dense(32, activation='relu')) 
+model.add(Dense(1, activation='sigmoid')) 
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+model.fit(X_train, y_train, epochs=100, batch_size=32, validation_split=0.2)
+loss, accuracy = model.evaluate(X_test, y_test)
+print(f"Test Accuracy: {accuracy*100:.2f}%")
+predictions = model.predict(X_test)
+predictions = (predictions > 0.5).astype(int) 
+print("Predictions for the first 10 houses:")
+print(predictions[:10].flatten())
+print("Actual labels for the first 10 houses:")
+print(y_test[:10].values)
 
+Q.2. Write a python program to implement multiple Linear Regression for a house
+price dataset
 
-Q.2 Write a program to sense a finger when it is placed on the board Arduino. [15 M]
-#define TOUCH_SENSOR_PIN 8 // Pin for the capacitive touch sensor
-#define LED_PIN 13 // Pin for the LED (optional)
-void setup() {
-// Initialize the touch sensor pin as input
-pinMode(TOUCH_SENSOR_PIN, INPUT);
-
-// Initialize the LED pin as output
-pinMode(LED_PIN, OUTPUT);
-
-// Start the Serial Monitor
-Serial.begin(9600);
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+actual dataset (e.g., 'house_prices.csv')
+data = {
+ 'Area': [1500, 1800, 2400, 3000, 3500, 4000, 4500, 5000, 5500, 6000],
+ 'Price': [245000, 312000, 369000, 450000, 512000, 570000, 600000, 650000,
+700000, 750000]
 }
-void loop() {
-// Read the state of the touch sensor
-int sensorState = digitalRead(TOUCH_SENSOR_PIN);
-
-// Check if a finger is placed on the sensor
-if (sensorState == LOW) { // TTP223 sensor returns LOW when touched
-Serial.println("Finger detected!");
-digitalWrite(LED_PIN, HIGH); // Turn on LED (if connected)
-} else {
-Serial.println("No finger detected.");
-digitalWrite(LED_PIN, LOW); // Turn off LED
-}
-// Delay before the next reading
-delay(100); // Delay for 100ms before checking again
-}
+df = pd.DataFrame(data)
+X = df[['Area']] 
+y = df['Price'] 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
+random_state=42)
+model = LinearRegression()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+print(f'Mean Squared Error: {mse}')
+print(f'R-squared: {r2}')
+plt.scatter(X_test, y_test, color='blue', label='Actual prices')
+plt.plot(X_test, y_pred, color='red', label='Regression line')
+plt.title('House Price Prediction')
+plt.xlabel('Area (Square feet)')
+plt.ylabel('Price')
+plt.legend()
+plt.show()
+new_area = np.array([[2500]])
+predicted_price = model.predict(new_area)
+print(f'Predicted price for a house with 2500 sq. feet:
+${predicted_price[0]:,.2f}')

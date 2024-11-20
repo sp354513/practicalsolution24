@@ -1,154 +1,77 @@
-Q.1 Write a Java Program to implement Factory method for Pizza Store with createPizza(),
-orederPizza(), prepare(), Bake(), cut(), box(). Use this to create variety of pizza’s like
-NyStyleCheesePizza, ChicagoStyleCheesePizza etc.
-1. Pizza Interface
-java
-Copy code
-public interface Pizza {
- void prepare();
- void bake();
- void cut();
- void box();
-}
-2. Concrete Pizza Classes
-Each specific pizza will implement the Pizza interface.
-NyStyleCheesePizza.java
-java
-Copy code
-public class NyStyleCheesePizza implements Pizza {
- @Override
- public void prepare() {
- System.out.println("Preparing New York Style Cheese Pizza...");
- }
- @Override
- public void bake() {
- System.out.println("Baking New York Style Cheese Pizza...");
- }
- @Override
- public void cut() {
- System.out.println("Cutting New York Style Cheese Pizza...");
- }
- @Override
- public void box() {
- System.out.println("Boxing New York Style Cheese Pizza...");
- }
-}
-ChicagoStyleCheesePizza.java
-java
-Copy code
-public class ChicagoStyleCheesePizza implements Pizza {
- @Override
- public void prepare() {
- System.out.println("Preparing Chicago Style Cheese Pizza...");
- }
- @Override
- public void bake() {
- System.out.println("Baking Chicago Style Cheese Pizza...");
- }
- @Override
- public void cut() {
- System.out.println("Cutting Chicago Style Cheese Pizza...");
- }
- @Override
- public void box() {
- System.out.println("Boxing Chicago Style Cheese Pizza...");
- }
-}
-3. PizzaStore Class with Factory Method
-The PizzaStore class will have a createPizza() method that is overridden by subclasses to
-create different types of pizzas.
-java
-Copy code
-public abstract class PizzaStore {
- // The orderPizza() method is the factory method that creates a pizza
- public Pizza orderPizza(String type) {
- Pizza pizza = createPizza(type); // Factory method
- pizza.prepare();
- pizza.bake();
- pizza.cut();
- pizza.box();
- return pizza;
- }
- // This method will be overridden by subclasses to create specific pizza
-types
- protected abstract Pizza createPizza(String type);
-}
-4. Concrete Pizza Store Subclasses
-We can now create specific pizza stores (like NyPizzaStore and ChicagoPizzaStore) that will
-implement the createPizza() method to create specific types of pizzas.
-NyPizzaStore.java
-java
-Copy code
-public class NyPizzaStore extends PizzaStore {
- @Override
- protected Pizza createPizza(String type) {
- if (type.equals("cheese")) {
- return new NyStyleCheesePizza();
- } else {
- // Add other pizza types as needed
- return null;
- }
- }
-}
-ChicagoPizzaStore.java
-java
-Copy code
-public class ChicagoPizzaStore extends PizzaStore {
- @Override
- protected Pizza createPizza(String type) {
- if (type.equals("cheese")) {
- return new ChicagoStyleCheesePizza();
- } else {
- // Add other pizza types as needed
- return null;
- }
- }
-}
-5. Main Class to Test
-Now, let's implement a Main class to test the pizza store ordering process.
-java
-Copy code
-public class Main {
- public static void main(String[] args) {
- // Create a New York Pizza Store
- PizzaStore nyPizzaStore = new NyPizzaStore();
- // Order a Cheese Pizza from New York Pizza Store
- Pizza nyPizza = nyPizzaStore.orderPizza("cheese");
- System.out.println("\n-----\n");
- // Create a Chicago Pizza Store
- PizzaStore chicagoPizzaStore = new ChicagoPizzaStore();
- // Order a Cheese Pizza from Chicago Pizza Store
- Pizza chicagoPizza = chicagoPizzaStore.orderPizza("cheese");
- }
-}
+Q.1. Write a python program to implement k-means algorithm on a mall_customers
+dataset.
 
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+data = pd.read_csv('mall_customers.csv')
+print("First few rows of the dataset:")
+print(data.head())
+X = data[['Annual Income (k$)', 'Spending Score (1-100)']]
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+inertia = []
+K_range = range(1, 11)
+for k in K_range:
+kmeans = KMeans(n_clusters=k, random_state=42)
+kmeans.fit(X_scaled)
+inertia.append(kmeans.inertia_)
+plt.figure(figsize=(8, 4))
+plt.plot(K_range, inertia, marker='o')
+plt.xlabel('Number of Clusters (K)')
+plt.ylabel('Inertia')
+plt.title('Elbow Method for Optimal K')
+plt.show()
+optimal_k = 5 
+kmeans = KMeans(n_clusters=optimal_k, random_state=42)
+kmeans.fit(X_scaled)
+data['Cluster'] = kmeans.labels_
+print("\nDataset with Cluster Assignments:")
+print(data.head())
+plt.figure(figsize=(10, 6))
+plt.scatter(X_scaled[:, 0], X_scaled[:, 1], c=kmeans.labels_, cmap='viridis',
+marker='o', edgecolor='k')
+plt.xlabel('Annual Income (scaled)')
+plt.ylabel('Spending Score (scaled)')
+plt.title('K-means Clustering of Mall Customers')
+plt.colorbar(label='Cluster')
+plt.show()
 
+Q.2. Write a python program to Implement Simple Linear Regression for predicting
+house price.
 
-Q.2 Write a program to sense a finger when it is placed on the board Arduino.
-[15 M]
-// Define the pin for the capacitive touch sensor
-const int touchPin = 7; // Pin connected to the SIG (signal) of the TTP223
-sensor
-const int ledPin = 13; // Pin connected to the LED
-void setup() {
- // Set the touch sensor pin as input
- pinMode(touchPin, INPUT);
- // Set the LED pin as output
- pinMode(ledPin, OUTPUT);
- // Start serial communication for debugging
- Serial.begin(9600);
-}
-void loop() {
- // Read the state of the touch sensor
- int touchState = digitalRead(touchPin);
- // If the sensor detects a touch (HIGH state)
- if (touchState == HIGH) {
- digitalWrite(ledPin, HIGH); // Turn on the LED
- Serial.println("Finger detected! LED ON");
- } else {
- digitalWrite(ledPin, LOW); // Turn off the LED
- Serial.println("No finger detected. LED OFF");
- }
- // Small delay for stability
- delay(100);
-}
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+data = pd.read_csv('house_prices.csv')
+print("First few rows of the dataset:")
+print(data.head())
+print("\nChecking for null values:")
+print(data.isnull().sum())
+data = data.dropna()
+X = data[['SquareFootage']] 
+y = data['Price'] 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
+random_state=42)
+model = LinearRegression()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+print(f"\nMean Squared Error (MSE): {mse:.2f}")
+print(f"R-squared (R2) Score: {r2:.2f}")
+print("\nModel Coefficients:")
+print(f"Slope (Coefficient for SquareFootage): {model.coef_[0]:.2f}")
+print(f"Intercept: {model.intercept_:.2f}")
+plt.figure(figsize=(10, 6))
+plt.scatter(X, y, color='blue', label='Actual Prices')
+plt.plot(X_test, y_pred, color='red', linewidth=2, label='Regression Line')
+plt.xlabel('Square Footage')
+plt.ylabel('House Price')
+plt.title('Simple Linear Regression for House Price Prediction')
+plt.legend()
+plt.show()

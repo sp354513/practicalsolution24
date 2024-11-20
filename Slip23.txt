@@ -1,0 +1,58 @@
+Q.1. Fit the simple linear regression and polynomial linear regression models to
+Salary_positions.csv data. Find which one is more accurately fitting to the given data.
+Also predict the salaries of level 11 and level 12 employees.
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import train_test_split
+data = pd.read_csv('Salary_positions.csv')
+print(data.head())
+X = data['Level'].values.reshape(-1, 1) 
+y = data['Salary'].values 
+lin_reg = LinearRegression()
+lin_reg.fit(X, y)
+poly = PolynomialFeatures(degree=2)
+X_poly = poly.fit_transform(X)
+poly_reg = LinearRegression()
+poly_reg.fit(X_poly, y)
+y_pred_lin = lin_reg.predict(X)
+y_pred_poly = poly_reg.predict(X_poly)
+rmse_lin = np.sqrt(mean_squared_error(y, y_pred_lin))
+rmse_poly = np.sqrt(mean_squared_error(y, y_pred_poly))
+print(f"RMSE for Simple Linear Regression: {rmse_lin}")
+print(f"RMSE for Polynomial Linear Regression: {rmse_poly}")
+level_11 = np.array([[11]])
+level_12 = np.array([[12]])
+salary_pred_lin_11 = lin_reg.predict(level_11)
+salary_pred_lin_12 = lin_reg.predict(level_12)
+salary_pred_poly_11 = poly_reg.predict(poly.transform(level_11))
+salary_pred_poly_12 = poly_reg.predict(poly.transform(level_12))
+print(f"Predicted Salary for Level 11 (Linear): {salary_pred_lin_11}")
+print(f"Predicted Salary for Level 12 (Linear): {salary_pred_lin_12}")
+print(f"Predicted Salary for Level 11 (Polynomial): {salary_pred_poly_11}")
+print(f"Predicted Salary for Level 12 (Polynomial): {salary_pred_poly_12}")
+plt.scatter(X, y, color='red')
+plt.plot(X, y_pred_lin, label='Linear Regression', color='blue')
+plt.plot(X, y_pred_poly, label='Polynomial Regression (degree=2)', color='green')
+plt.xlabel('Level')
+plt.ylabel('Salary')
+plt.title('Linear vs Polynomial Regression')
+plt.legend()
+plt.show()
+
+Q.2. Write a python program to find all null values from a dataset and remove them.
+
+import pandas as pd
+data = pd.read_csv('your_dataset.csv')
+print("Null values in each column before removal:")
+print(data.isnull().sum()) 
+data_cleaned = data.dropna()
+print("\nNull values in each column after removal:")
+print(data_cleaned.isnull().sum()) 
+data_cleaned.to_csv('cleaned_dataset.csv', index=False)
+print("\nFirst few rows of cleaned dataset:")
+print(data_cleaned.head())
