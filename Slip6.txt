@@ -1,73 +1,48 @@
-Q.1. Write a python program to implement Polynomial Linear Regression for Boston
-Housing Dataset.
+Q.1) Develop an Express.js application that defines routes for Create and Read
+operations on a resource (products).
 
-import pandas as pd
-import numpy as np
-from sklearn.datasets import load_boston
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.metrics import mean_squared_error, r2_score
-import matplotlib.pyplot as plt
-boston = load_boston()
-data = pd.DataFrame(data=boston.data, columns=boston.feature_names)
-data['PRICE'] = boston.target 
-print("First few rows of the Boston Housing dataset:")
-print(data.head())
-X = data.drop('PRICE', axis=1) 
-y = data['PRICE'] 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
-random_state=42)
-poly = PolynomialFeatures(degree=2)
-X_train_poly = poly.fit_transform(X_train)
-X_test_poly = poly.transform(X_test)
-model = LinearRegression()
-model.fit(X_train_poly, y_train)
-y_pred = model.predict(X_test_poly)
-mse = mean_squared_error(y_test, y_pred)
-r2 = r2_score(y_test, y_pred)
-print(f"\nMean Squared Error (MSE): {mse:.2f}")
-print(f"R-squared (R²) Score: {r2:.2f}")
-plt.figure(figsize=(8, 6))
-plt.scatter(y_test, y_pred, color='blue', alpha=0.6)
-plt.plot([y.min(), y.max()], [y.min(), y.max()], color='red', linewidth=2) 
-reference
-plt.xlabel('Actual House Prices')
-plt.ylabel('Predicted House Prices')
-plt.title('Actual vs Predicted House Prices (Polynomial Regression)')
-plt.show()
-
-Q.2. Use K-means clustering model and classify the employees into various income
-groups or clusters. Preprocess data if require (i.e. drop missing or null values).
-
-import pandas as pd
-import numpy as np
-from sklearn.cluster import KMeans
-from sklearn.preprocessing import StandardScaler
-import matplotlib.pyplot as plt
-import seaborn as sns
-data = {
-'Employee_ID': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-'Income': [45000, 54000, 32000, 60000, 73000, 100000, 25000, 59000, 42000,
-80000]
+const express = require('express');
+const app = express();
+const port = 3000;
+app.use(express.json());
+let products = [];
+app.post('/products', (req, res) => {
+const { name, price } = req.body;
+if (!name || !price) {
+return res.status(400).json({ message: 'Name and price are required.' });
 }
-df = pd.DataFrame(data)
-print("\nInitial Data with null values check:")
-print(df.isnull().sum())
-needed
-X = df[['Income']]
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
-kmeans = KMeans(n_clusters=3, random_state=42)
-df['Cluster'] = kmeans.fit_predict(X_scaled)
-print("\nCluster Centers (Income groups):")
-print(kmeans.cluster_centers_)
-print("\nEmployee data with cluster labels:")
-print(df)
-plt.figure(figsize=(8, 6))
-sns.scatterplot(data=df, x='Income', y=np.zeros_like(df['Income']), hue='Cluster',
-palette='viridis', s=100)
-plt.title('K-means Clustering of Employees based on Income')
-plt.xlabel('Income')
-plt.ylabel('Cluster')
-plt.show()
+const newProduct = {
+id: products.length + 1, 
+name,
+price
+};
+products.push(newProduct);
+res.status(201).json({ message: 'Product created successfully', product: newProduct
+});
+});
+app.get('/products', (req, res) => {
+res.status(200).json(products);
+});
+app.listen(port, () => {
+console.log(`Server is running on http://localhost:${port}`);
+});
+
+Q.2) Find a company with a workforce greater than 30 in the array. (Using find by id
+method)
+
+const companies = [
+{ id: 1, name: "Company A", workforce: 25 },
+{ id: 2, name: "Company B", workforce: 50 },
+{ id: 3, name: "Company C", workforce: 20 },
+{ id: 4, name: "Company D", workforce: 35 },
+];
+const companyWithLargeWorkforce = companies.find(company =>
+company.workforce > 30);
+if (companyWithLargeWorkforce) {
+console.log(`Found a company with a workforce greater than 30:`);
+console.log(`Company ID: ${companyWithLargeWorkforce.id}`);
+console.log(`Company Name: ${companyWithLargeWorkforce.name}`);
+console.log(`Workforce: ${companyWithLargeWorkforce.workforce}`);
+} else {
+console.log("No company found with a workforce greater than 30.");
+}

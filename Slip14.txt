@@ -1,60 +1,97 @@
-Q.1. Create a CNN model and train it on mnist handwritten digit dataset. Using model
-find out the digit written by a hand in a given image. Import mnist dataset from
-tensorflow.keras.datasets
+Q.1) Create Angular application that print the name of students who got 85% using
+filter and map method.
 
-import tensorflow as tf
-from tensorflow.keras import layers, models
-import numpy as np
-import matplotlib.pyplot as plt
-(train_images, train_labels), (test_images, test_labels) =
-tf.keras.datasets.mnist.load_data()
-train_images = train_images.reshape((train_images.shape[0], 28, 28, 1))
-test_images = test_images.reshape((test_images.shape[0], 28, 28, 1))
-train_images, test_images = train_images / 255.0, test_images / 255.0
-model = models.Sequential([
-activation
- layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)),
- layers.MaxPooling2D((2, 2)),
- layers.Conv2D(64, (3, 3), activation='relu'),
- layers.MaxPooling2D((2, 2)),
+ng generate component student-list
 
- layers.Flatten(),
 
- layers.Dense(64, activation='relu'),
+// student-list.component.ts
 
- layers.Dense(10, activation='softmax')
-])
-model.compile(optimizer='adam',
- loss='sparse_categorical_crossentropy',
- metrics=['accuracy'])
-model.fit(train_images, train_labels, epochs=5, batch_size=64,
-validation_split=0.1)
-test_loss, test_acc = model.evaluate(test_images, test_labels)
-print(f"Test accuracy: {test_acc}")
-prediction = model.predict(np.expand_dims(test_images[0], axis=0)) 
-dims to match input shape
-predicted_digit = np.argmax(prediction)
-print(f"Predicted digit: {predicted_digit}")
-plt.imshow(test_images[0].reshape(28, 28), cmap='gray')
-plt.title(f"Predicted: {predicted_digit}")
-plt.show()
-
-Q.2. Write a python program to find all null values in a given dataset and remove
-them. Create your own dataset.
-
-import pandas as pd
-import numpy as np
-data = {
-'Name': ['Alice', 'Bob', 'Charlie', 'David', np.nan],
-'Age': [25, 30, np.nan, 22, 23],
-'City': ['New York', 'Los Angeles', 'Chicago', np.nan, 'Houston'],
-'Salary': [50000, 60000, 55000, 45000, np.nan]
+import { Component } from '@angular/core';
+@Component({
+ selector: 'app-student-list',
+ templateUrl: './student-list.component.html',
+ styleUrls: ['./student-list.component.css']
+})
+export class StudentListComponent {
+ students = [
+ { name: 'Alice', score: 90 },
+ { name: 'Bob', score: 76 },
+ { name: 'Charlie', score: 85 },
+ { name: 'David', score: 88 },
+ { name: 'Eve', score: 82 }
+ ];
+ highScorers = this.students
+ .filter(student => student.score >= 85)
+ .map(student => student.name);
 }
-df = pd.DataFrame(data)
-print("Original Dataset:")
-print(df)
-print("\nNull Values in the Dataset:")
-print(df.isnull())
-df_cleaned = df.dropna()
-print("\nDataset after removing rows with null values:")
-print(df_cleaned)
+
+// student-list.component.html
+
+<div style="text-align: center; margin-top: 20px;">
+ <h2>Students with 85% or Higher</h2>
+ <ul>
+ <li *ngFor="let studentName of highScorers">{{ studentName }}</li>
+ </ul>
+</div>
+
+// app.module.ts
+
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { AppComponent } from './app.component';
+import { StudentListComponent } from './student-list/student-list.component';
+@NgModule({
+ declarations: [
+ AppComponent,
+ StudentListComponent
+ ],
+ imports: [
+ BrowserModule
+ ],
+ providers: [],
+ bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+<!-- app.component.html -->
+<app-student-list></app-student-list>
+
+Q.2) Develop an Express.js application that defines routes for Create, Update
+operations on a resource (Employee)
+
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
+const PORT = 3000;
+app.use(bodyParser.json());
+let employees = [];
+app.post('/employees', (req, res) => {
+const { id, name, position, salary } = req.body;
+if (!id || !name || !position || !salary) {
+return res.status(400).json({ error: 'All fields are required (id, name, position,
+salary)' });
+}
+const existingEmployee = employees.find(emp => emp.id === id);
+if (existingEmployee) {
+return res.status(409).json({ error: 'Employee with the same ID already exists' });
+}
+const newEmployee = { id, name, position, salary };
+employees.push(newEmployee);
+res.status(201).json({ message: 'Employee created successfully', employee:
+newEmployee });
+});
+app.put('/employees/:id', (req, res) => {
+const employeeId = req.params.id;
+const { name, position, salary } = req.body;
+const employee = employees.find(emp => emp.id === employeeId);
+if (!employee) {
+return res.status(404).json({ error: 'Employee not found' });
+}
+if (name) employee.name = name;
+if (position) employee.position = position;
+if (salary) employee.salary = salary;
+res.json({ message: 'Employee updated successfully', employee });
+});
+app.listen(PORT, () => {
+console.log(`Server is running on http://localhost:${PORT}`);
+});

@@ -1,50 +1,85 @@
-Q.1 Use Apriori algorithm on groceries dataset to find which items are brought
-together. Use minimum support =0.25
+Q.1) Write an AngularJS script for addition of two numbers using ng-init, ng-model &
+ng-bind. And also demonstrate ng-show, ng-disabled, ng-click directives on button
+component. 
 
-import pandas as pd
-from mlxtend.frequent_patterns import apriori, association_rules
-data = {
-    'Bread': [1, 1, 0, 1, 0],
-    'Milk': [1, 0, 1, 1, 1],
-    'Butter': [0, 1, 0, 1, 0],
-    'Eggs': [1, 1, 1, 0, 0],
-    'Cheese': [0, 1, 1, 1, 0]
+index.html
+
+<!DOCTYPE html>
+<html ng-app="AdditionApp">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+</head>
+<body ng-controller="AdditionController" ng-init="num1=0; num2=0; showResult=false">
+    <h2>AngularJS Addition Example</h2>
+    <label>Number 1:</label>
+    <input type="number" ng-model="num1" placeholder="Enter first number">
+    <br><br>
+    <label>Number 2:</label>
+    <input type="number" ng-model="num2" placeholder="Enter second number">
+    <br><br>
+    <button 
+        ng-click="calculateSum()" 
+        ng-disabled="!num1 || !num2" 
+        ng-init="showResult=false">
+        Add Numbers
+    </button>
+    <br><br>
+    <div ng-show="showResult">
+        <strong>Sum: </strong><span ng-bind="sum"></span>
+    </div>
+    <button ng-click="reset()">Reset</button>
+    <script>
+        angular.module('AdditionApp', [])
+            .controller('AdditionController', function ($scope) {
+                $scope.calculateSum = function () {
+                    $scope.sum = $scope.num1 + $scope.num2;
+                    $scope.showResult = true;
+                };
+                $scope.reset = function () {
+                    $scope.num1 = 0;
+                    $scope.num2 = 0;
+                    $scope.sum = null;
+                    $scope.showResult = false;
+                };
+            });
+    </script>
+</body>
+</html>
+
+
+Q.2) Create a Node.js application that reads data from multiple files asynchronously
+using promises and async/await
+
+app.js
+
+const fs = require('fs').promises;
+async function readFileAsync(filePath) {
+  try {
+    const data = await fs.readFile(filePath, 'utf-8');
+    return data;
+  } catch (error) {
+    throw new Error(`Error reading file ${filePath}: ${error.message}`);
+  }
 }
-transactions = pd.DataFrame(data)
-frequent_itemsets = apriori(transactions, min_support=0.25, use_colnames=True)
-print("Frequent itemsets with minimum support of 0.25:")
-print(frequent_itemsets)
-rules = association_rules(frequent_itemsets, metric="lift", min_threshold=1)
-print("\nAssociation rules based on lift:")
-print(rules)
-
-
-
-Q.2. Write a Python program to prepare Scatter Plot for Iris Dataset. Convert Categorical
-values in numeric format for a dataset
-
-import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
-from sklearn.datasets import load_iris
-from sklearn.preprocessing import LabelEncoder
-iris_data = load_iris()
-df = pd.DataFrame(data=iris_data.data, columns=iris_data.feature_names)
-df['species'] = iris_data.target
-label_encoder = LabelEncoder()
-df['species_numeric'] = label_encoder.fit_transform(df['species'])
-print(df.head())
-plt.figure(figsize=(8, 6))
-sns.scatterplot(
-    x=df[iris_data.feature_names[0]], 
-    y=df[iris_data.feature_names[1]], 
-    hue=df['species_numeric'],
-    palette='viridis',
-    style=df['species_numeric'],
-    legend='full'
-)
-plt.title("Scatter Plot: Sepal Length vs Sepal Width")
-plt.xlabel("Sepal Length (cm)")
-plt.ylabel("Sepal Width (cm)")
-plt.show()
-
+async function readMultipleFiles(filePaths) {
+  try {
+    const fileReadPromises = filePaths.map((path) => readFileAsync(path));
+    const fileContents = await Promise.all(fileReadPromises);
+    return fileContents;
+  } catch (error) {
+    throw new Error(`Error reading multiple files: ${error.message}`);
+  }
+}
+async function main() {
+  try {
+    const filePaths = ['file1.txt', 'file2.txt', 'file3.txt']; 
+    console.log('Reading files...');
+    const contents = await readMultipleFiles(filePaths);
+    contents.forEach((content, index) => {
+      console.log(`\nContent of ${filePaths[index]}:\n${content}`);
+    });
+  } catch (error) {
+    console.error(error.message);
+  }
+}
+main();

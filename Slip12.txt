@@ -1,81 +1,94 @@
-Q.1. Write a python program to implement k-nearest Neighbors ML algorithm to
-build prediction model (Use iris Dataset)
+Q.1) Write an AngularJS script to print details of Employee (employee name,
+    employee Id,Pin code, address etc.) in tabular form using ng-repeat.
+    
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Details</title>
+    <!-- Include AngularJS from CDN -->
+    <script
+    src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <style>
+    table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    padding: 10px;
+    }
+    th {
+    text-align: left;
+    }
+    </style>
+    </head>
+    <body ng-app="employeeApp" ng-controller="employeeController">
+    <h2>Employee Details</h2>
+    <table>
+    <thead>
+    <tr>
+    <th>Employee ID</th>
+    <th>Employee Name</th>
+    <th>Pin Code</th>
+    <th>Address</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="employee in employees">
+    <td>{{ employee.id }}</td>
+    <td>{{ employee.name }}</td>
+    <td>{{ employee.pinCode }}</td>
+    <td>{{ employee.address }}</td>
+    </tr>
+    </tbody>
+    </table>
+    <script>
+    // AngularJS application
+    var app = angular.module('employeeApp', []);
+    
+    // AngularJS Controller
+    app.controller('employeeController', function($scope) {
+    $scope.employees = [
+    {id: 'E001', name: 'Alice', pinCode: '12345', address: '123 Elm Street'},
+    {id: 'E002', name: 'Bob', pinCode: '23456', address: '456 Oak Avenue'},
+    {id: 'E003', name: 'Charlie', pinCode: '34567', address: '789 Pine Road'},
+    {id: 'E004', name: 'David', pinCode: '45678', address: '101 Maple Blvd'},
+    {id: 'E005', name: 'Eva', pinCode: '56789', address: '202 Birch Lane'}
+    ];
+    });
+    </script>
+    </body>
+    </html>
 
-import numpy as np
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.datasets import load_iris
-from sklearn.metrics import accuracy_score, classification_report
-iris = load_iris()
-X = iris.data 
-width
-y = iris.target
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3,
-random_state=42)
-k = 3 
-knn = KNeighborsClassifier(n_neighbors=k)
-knn.fit(X_train, y_train)
-y_pred = knn.predict(X_test)
-accuracy = accuracy_score(y_test, y_pred)
-print(f'Accuracy: {accuracy:.2f}')
-print("Classification Report:")
-print(classification_report(y_test, y_pred, target_names=iris.target_names))
+    Q.2) Develop an Express.js application that defines routes for Create operations on a
+    resource (User).
 
-Q.2. Fit the simple linear regression and polynomial linear regression models
-to
-Salary_positions.csv data. Find which one is more accurately fitting to the
-given
-data. Also predict the salaries of level 11 and level 12 employees
-
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.metrics import mean_squared_error, r2_score
-from sklearn.model_selection import train_test_split
-data = pd.read_csv('Salary_positions.csv')
-X = data['Position Level'].values.reshape(-1, 1) 
-y = data['Salary'].values 
-simple_lr = LinearRegression()
-simple_lr.fit(X, y)
-poly = PolynomialFeatures(degree=4)
-X_poly = poly.fit_transform(X)
-poly_lr = LinearRegression()
-poly_lr.fit(X_poly, y)
-y_pred_simple = simple_lr.predict(X)
-y_pred_poly = poly_lr.predict(X_poly)
-mse_simple = mean_squared_error(y, y_pred_simple)
-mse_poly = mean_squared_error(y, y_pred_poly)
-r2_simple = r2_score(y, y_pred_simple)
-r2_poly = r2_score(y, y_pred_poly)
-print(f"Simple Linear Regression MSE: {mse_simple:.2f}")
-print(f"Polynomial Linear Regression MSE: {mse_poly:.2f}")
-print(f"Simple Linear Regression R²: {r2_simple:.2f}")
-print(f"Polynomial Linear Regression R²: {r2_poly:.2f}")
-salary_11_simple = simple_lr.predict([[11]])
-Level 11
-salary_12_simple = simple_lr.predict([[12]]) 
-Level 12
-salary_11_poly = poly_lr.predict(poly.transform([[11]])) 
-Prediction for Level 11
-salary_12_poly = poly_lr.predict(poly.transform([[12]])) 
-Prediction for Level 12
-print(f"Predicted salary for level 11 (Simple LR):
-${salary_11_simple[0]:,.2f}")
-print(f"Predicted salary for level 12 (Simple LR):
-${salary_12_simple[0]:,.2f}")
-print(f"Predicted salary for level 11 (Polynomial LR):
-${salary_11_poly[0]:,.2f}")
-print(f"Predicted salary for level 12 (Polynomial LR):
-${salary_12_poly[0]:,.2f}")
-plt.scatter(X, y, color='red') 
-plt.plot(X, y_pred_simple, label='Linear Regression', color='blue')
-plt.plot(X, y_pred_poly, label='Polynomial Regression (degree 4)',
-color='green')
-plt.xlabel('Position Level')
-plt.ylabel('Salary')
-plt.title('Salary vs Position Level')
-plt.legend()
-plt.show()
+    // app.js
+    const express = require('express');
+    const bodyParser = require('body-parser');
+    const app = express();
+    app.use(bodyParser.json());
+    let users = [];
+    app.post('/users', (req, res) => {
+    const { name, email, age } = req.body;
+    if (!name || !email || !age) {
+    return res.status(400).json({ message: "Name, email, and age are required." });
+    }
+    const newUser = {
+    id: users.length + 1, 
+    name,
+    email,
+    age
+    };
+    users.push(newUser);
+    res.status(201).json({
+    message: "User created successfully",
+    user: newUser
+    });
+    });
+    app.get('/users', (req, res) => {
+    res.status(200).json(users);
+    });
+    app.listen(3000, () => {
+    console.log('Server running on port 3000');
+    });
+    

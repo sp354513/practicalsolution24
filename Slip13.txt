@@ -1,101 +1,118 @@
-Q.1. Create RNN model and analyze the Google stock price dataset. Find out
-increasing or decreasing trends of stock price for the next day
-Python Code Example:
+Q.1) Extend the previous Express.js application to include middleware for parsing
+request bodies (e.g., JSON, form data) and validating input data. Send appropriate
+JSON responses for success and error cases
 
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import yfinance as yf
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.model_selection import train_test_split
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense, Dropout
-from sklearn.metrics import accuracy_score
-df = yf.download('GOOGL', start='2010-01-01', end='2024-01-01')
-df.head()
-df = df[['Close']]
-scaler = MinMaxScaler(feature_range=(0, 1))
-scaled_data = scaler.fit_transform(df)
-def create_dataset(data, time_step=60):
- X, y = [], []
- for i in range(time_step, len(data)):
- X.append(data[i-time_step:i, 0])
- y.append(1 if data[i, 0] > data[i-1, 0] else 0) 
-for decrease
- return np.array(X), np.array(y)
-X, y = create_dataset(scaled_data)
-X = X.reshape(X.shape[0], X.shape[1], 1) 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
-random_state=42)
-model = Sequential()
-model.add(LSTM(units=50, return_sequences=True,
-input_shape=(X_train.shape[1], 1)))
-model.add(Dropout(0.2))
-model.add(LSTM(units=50, return_sequences=False))
-model.add(Dropout(0.2))
-model.add(Dense(units=1, activation='sigmoid')) 
-(increase), 0 (decrease)
-model.compile(optimizer='adam', loss='binary_crossentropy',
-metrics=['accuracy'])
-model.fit(X_train, y_train, epochs=10, batch_size=32,
-validation_data=(X_test, y_test))
-loss, accuracy = model.evaluate(X_test, y_test)
-print(f'Test Accuracy: {accuracy * 100:.2f}%')
-last_60_days = scaled_data[-60:]
-last_60_days = last_60_days.reshape(1, -1)
-last_60_days = last_60_days.reshape((1, 60, 1))
-predicted_trend = model.predict(last_60_days)
-predicted_trend = 1 if predicted_trend[0][0] > 0.5 else 0
-if predicted_trend == 1:
- print("The stock price is predicted to increase tomorrow.")
-else:
- print("The stock price is predicted to decrease tomorrow.")
-predicted_stock_price = model.predict(X_test)
-predicted_stock_price = (predicted_stock_price > 0.5)
-plt.figure(figsize=(10, 6))
-plt.plot(y_test, color='blue', label='Real Stock Price Trend')
-plt.plot(predicted_stock_price, color='red', label='Predicted Stock Price Trend')
-plt.title('Stock Price Trend Prediction')
-plt.xlabel('Days')
-plt.ylabel('Trend (1 = Increase, 0 = Decrease)')
-plt.legend()
-plt.show()
+// app.js
 
-Q.2. Write a python program to implement simple Linear Regression for
-predicting house price
-
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, r2_score
-actual dataset (e.g., 'house_prices.csv')
-data = {
- 'Area': [1500, 1800, 2400, 3000, 3500, 4000, 4500, 5000, 5500, 6000],
- 'Price': [245000, 312000, 369000, 450000, 512000, 570000, 600000, 650000,
-700000, 750000]
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
+app.use(bodyParser.json()); 
+app.use(bodyParser.urlencoded({ extended: true })); 
+let users = [];
+function validateUserData(req, res, next) {
+const { name, email, age } = req.body;
+if (!name || !email || !age) {
+return res.status(400).json({ message: "Name, email, and age are required." });
 }
-df = pd.DataFrame(data)
-X = df[['Area']] 
-y = df['Price'] 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
-random_state=42)
-model = LinearRegression()
-model.fit(X_train, y_train)
-y_pred = model.predict(X_test)
-mse = mean_squared_error(y_test, y_pred)
-r2 = r2_score(y_test, y_pred)
-print(f'Mean Squared Error: {mse}')
-print(f'R-squared: {r2}')
-plt.scatter(X_test, y_test, color='blue', label='Actual prices')
-plt.plot(X_test, y_pred, color='red', label='Regression line')
-plt.title('House Price Prediction')
-plt.xlabel('Area (Square feet)')
-plt.ylabel('Price')
-plt.legend()
-plt.show()
-new_area = np.array([[2500]])
-predicted_price = model.predict(new_area)
-print(f'Predicted price for a house with 2500 sq. feet:
-${predicted_price[0]:,.2f}')
+const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+if (!emailRegex.test(email)) {
+return res.status(400).json({ message: "Invalid email format." });
+}
+if (isNaN(age)) {
+return res.status(400).json({ message: "Age must be a number." });
+}
+next();
+}
+app.post('/users', validateUserData, (req, res) => {
+const { name, email, age } = req.body;
+const newUser = {
+id: users.length + 1, 
+name,
+email,
+age
+};
+users.push(newUser);
+res.status(201).json({
+message: "User created successfully",
+user: newUser
+});
+});
+app.get('/users', (req, res) => {
+res.status(200).json(users);
+});
+app.listen(3000, () => {
+console.log('Server running on port 3000');
+});
+
+Q.2) Create a simple Angular component that takes input data and displays it. 
+
+1. app.component.ts - The TypeScript file where we define the component's
+logic.
+2. app.component.html - The HTML file for the component's template.
+
+Step 1: Set up the Angular Component
+
+If you haven't already, create a new Angular component using the Angular CLI:
+
+ng generate component displayInput
+
+This command will create the component files needed, including displayinput.component.ts and display-input.component.html.
+
+Step 2: Implement the Component
+
+1. display-input.component.ts (TypeScript Logic)
+Define the input property and the function to handle the display of input data.
+
+
+// display-input.component.ts
+import { Component } from '@angular/core';
+@Component({
+ selector: 'app-display-input',
+ templateUrl: './display-input.component.html',
+ styleUrls: ['./display-input.component.css']
+})
+export class DisplayInputComponent {
+ userInput: string = ''; 
+ displayText: string = ''; 
+ updateDisplay() {
+ this.displayText = this.userInput;
+ }
+}
+
+2. display-input.component.html (HTML Template)
+Add an input field, a button, and an area to display the input text.
+
+<div style="text-align: center; margin-top: 20px;">
+ <h2>Enter Some Text</h2>
+ <input [(ngModel)]="userInput" placeholder="Type something..." />
+ <button (click)="updateDisplay()">Display Text</button>
+ <h3 *ngIf="displayText">You entered: {{ displayText }}</h3>
+</div>
+
+
+// app.module.ts
+
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms'; 
+import { AppComponent } from './app.component';
+import { DisplayInputComponent } from './display-input/displayinput.component';
+@NgModule({
+ declarations: [
+ AppComponent,
+ DisplayInputComponent
+ ],
+ imports: [
+ BrowserModule,
+ FormsModule 
+ ],
+ providers: [],
+ bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+<!-- app.component.html -->
+<app-display-input></app-display-input>
+
+ng serve

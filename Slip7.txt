@@ -1,57 +1,60 @@
-Q.1. Fit the simple linear regression model to Salary_positions.csv data. Predict the sa
-of level 11 and level 12 employees
+Q.1) Create a Node.js application that reads data from multiple files asynchronously
+using promises and async/await
 
-import pandas as pd
-import numpy as np
-from sklearn.linear_model import LinearRegression
-import matplotlib.pyplot as plt
-data = pd.read_csv('Salary_positions.csv')
-print(data.head())
-X = data[['Level']] 
-y = data['Salary'] 
-model = LinearRegression()
-model.fit(X, y)
-levels = np.array([11, 12]).reshape(-1, 1)
-format
-predictions = model.predict(levels)
-print(f"Predicted salary for level 11 employee: ${predictions[0]:,.2f}")
-print(f"Predicted salary for level 12 employee: ${predictions[1]:,.2f}")
-plt.scatter(X, y, color='blue') 
-plt.plot(X, model.predict(X), color='red')
-plt.title('Salary vs Level')
-plt.xlabel('Employee Level')
-plt.ylabel('Salary')
-plt.show()
+const fs = require('fs').promises; 
+operations
+const readFile = async (fileName) => {
+try {
+const data = await fs.readFile(fileName, 'utf8');
+console.log(`Data from ${fileName}:`);
+console.log(data);
+} catch (err) {
+console.error(`Error reading file ${fileName}:`, err);
+}
+};
+const readMultipleFiles = async () => {
+try {
+await Promise.all([
+readFile('file1.txt'),
+readFile('file2.txt'),
+readFile('file3.txt')
+]);
+console.log('All files read successfully.');
+} catch (err) {
+console.error('Error reading files:', err);
+}
+};
+readMultipleFiles();
 
+Q.2) Develop an Express.js application that defines routes for Create and Read
+operations on a resource (User)
 
-Q.2. Write a python program to implement Naive Bayes on weather forecast dataset.
-[15 M]
+const express = require('express');
+const app = express();
+const port = 3000;
+app.use(express.json());
+let users = [];
+app.post('/users', (req, res) => {
+const { name, email } = req.body;
 
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.naive_bayes import GaussianNB
-from sklearn.metrics import accuracy_score
-from sklearn.preprocessing import LabelEncoder
-data = pd.read_csv('weather_forecast.csv')
-label_encoder = LabelEncoder()
-data['Temperature'] = label_encoder.fit_transform(data['Temperature'])
-data['Humidity'] = label_encoder.fit_transform(data['Humidity'])
-data['Wind'] = label_encoder.fit_transform(data['Wind'])
-data['Outlook'] = label_encoder.fit_transform(data['Outlook'])
-data['PlayTennis'] = label_encoder.fit_transform(data['PlayTennis'])
-X = data.drop('PlayTennis', axis=1) 
-y = data['PlayTennis'] 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
-random_state=42)
-model = GaussianNB()
-model.fit(X_train, y_train) 
-y_pred = model.predict(X_test)
-accuracy = accuracy_score(y_test, y_pred)
-print(f'Accuracy of the Naive Bayes model: {accuracy * 100:.2f}%')
-sample = pd.DataFrame({'Temperature': [label_encoder.transform(['Mild'])[0]],
-'Humidity': [label_encoder.transform(['High'])[0]],
-'Wind': [label_encoder.transform(['Weak'])[0]],
-'Outlook': [label_encoder.transform(['Sunny'])[0]]})
-prediction = model.predict(sample)
-prediction_label = label_encoder.inverse_transform(prediction)
-print(f'Prediction for the sample: {prediction_label[0]}')
+if (!name || !email) {
+return res.status(400).json({ error: 'Name and email are required' });
+}
+const newUser = { id: users.length + 1, name, email };
+users.push(newUser);
+res.status(201).json(newUser);
+});
+app.get('/users', (req, res) => {
+res.status(200).json(users);
+});
+app.get('/users/:id', (req, res) => {
+const userId = parseInt(req.params.id);
+const user = users.find(u => u.id === userId);
+if (!user) {
+return res.status(404).json({ error: 'User not found' });
+}
+res.status(200).json(user);
+});
+app.listen(port, () => {
+console.log(`Server running at http://localhost:${port}`);
+});

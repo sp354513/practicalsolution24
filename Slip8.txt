@@ -1,78 +1,199 @@
-Q.1. Write a python program to categorize the given news text into one of the
-available 20 categories of news groups, using multinomial Naïve Bayes machine
-learning model.
+Q.1) Create a simple Angular application that fetches data from an API using
+HttpClient. Implement an Observable to fetch data from an API endpoint
+Steps to Create the Application:
 
-import pandas as pd
-from sklearn.datasets import fetch_20newsgroups
-from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.metrics import accuracy_score, classification_report
-newsgroups = fetch_20newsgroups(subset='all') 
-X = newsgroups.data 
-y = newsgroups.target 
-vectorizer = TfidfVectorizer(stop_words='english', max_features=5000)
-X_tfidf = vectorizer.fit_transform(X)
-X_train, X_test, y_train, y_test = train_test_split(X_tfidf, y, test_size=0.3,
-random_state=42)
-nb_classifier = MultinomialNB()
-nb_classifier.fit(X_train, y_train)
-y_pred = nb_classifier.predict(X_test)
-accuracy = accuracy_score(y_test, y_pred)
-print(f'Accuracy of the Multinomial Naive Bayes model: {accuracy * 100:.2f}%')
-print('\nClassification Report:')
-print(classification_report(y_test, y_pred, target_names=newsgroups.target_names))
-sample_news = [
-"NASA's Perseverance rover on Mars has successfully collected its first sample of
-Martian rock."
-]
-sample_tfidf = vectorizer.transform(sample_news)
-predicted_category = nb_classifier.predict(sample_tfidf)
-print(f'\nPredicted Category for the sample news:
-{newsgroups.target_names[predicted_category[0]]}')
+app.module.ts 
 
-Q.2. Write a python program to implement Decision Tree whether or not to play
-Tennis.
-
-import pandas as pd
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, classification_report
-from sklearn.preprocessing import LabelEncoder
-data = {
-'Outlook': ['Sunny', 'Sunny', 'Overcast', 'Rain', 'Rain', 'Rain', 'Overcast', 'Sunny',
-'Sunny', 'Rain', 'Sunny', 'Overcast', 'Overcast', 'Rain'],
-'Temperature': ['Hot', 'Hot', 'Hot', 'Mild', 'Mild', 'Cool', 'Cool', 'Mild', 'Mild', 'Mild',
-'Mild', 'Mild', 'Mild', 'Hot'],
-'Humidity': ['High', 'High', 'High', 'High', 'Low', 'Low', 'Low', 'High', 'Low', 'Low',
-'High', 'Low', 'Low', 'High'],
-'Wind': ['Weak', 'Strong', 'Weak', 'Weak', 'Weak', 'Weak', 'Strong', 'Weak', 'Weak',
-'Strong', 'Weak', 'Strong', 'Strong', 'Weak'],
-'PlayTennis': ['No', 'No', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 'No', 'Yes', 'Yes', 'Yes', 'Yes',
-'Yes', 'No']
-}
-df = pd.DataFrame(data)
-label_encoders = {}
-for column in ['Outlook', 'Temperature', 'Humidity', 'Wind', 'PlayTennis']:
-le = LabelEncoder()
-df[column] = le.fit_transform(df[column])
-label_encoders[column] = le
-X = df.drop('PlayTennis', axis=1) 
-y = df['PlayTennis']
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3,
-random_state=42)
-dt_classifier = DecisionTreeClassifier(criterion='entropy', random_state=42)
-dt_classifier.fit(X_train, y_train)
-y_pred = dt_classifier.predict(X_test)
-accuracy = accuracy_score(y_test, y_pred)
-print(f'Accuracy of the Decision Tree model: {accuracy * 100:.2f}%')
-print('\nClassification Report:')
-print(classification_report(y_test, y_pred))
-new_data = pd.DataFrame({
-'Outlook': [label_encoders['Outlook'].transform(['Sunny'])[0]],
-'Temperature': [label_encoders['Temperature'].transform(['Mild'])[0]],
-'Humidity': [label_encoders['Humidity'].transform(['High'])[0]],
-'Wind': [label_encoders['Wind'].transform(['Weak'])[0]]
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
+HttpClientModule
+import { AppComponent } from './app.component';
+@NgModule({
+ declarations: [
+ AppComponent
+ ],
+ imports: [
+ BrowserModule,
+ HttpClientModule 
+ ],
+ providers: [],
+ bootstrap: [AppComponent]
 })
-prediction = dt_classifier.predict(new_data)
-print(f'\nPrediction for new data (Sunny, Mild, High Humidity, Weak Wind): {"Play" if prediction[0] == 1 else "Don\'t Play"}')
+export class AppModule { }
+
+ng generate service data
+
+data.service.ts 
+
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+@Injectable({
+ providedIn: 'root'
+})
+export class DataService {
+ private apiUrl = 'https://jsonplaceholder.typicode.com/posts'; //
+Replace with your API URL
+ constructor(private http: HttpClient) { }
+ getPosts(): Observable<any> {
+ return this.http.get<any>(this.apiUrl);
+ }
+}
+
+app.component.ts
+
+import { Component, OnInit } from '@angular/core';
+import { DataService } from './data.service';
+@Component({
+ selector: 'app-root',
+ templateUrl: './app.component.html',
+ styleUrls: ['./app.component.css']
+})
+export class AppComponent implements OnInit {
+ posts: any[] = []; 
+ constructor(private dataService: DataService) {}
+ ngOnInit(): void {
+ this.dataService.getPosts().subscribe(
+ (data) => {
+ this.posts = data; 
+ },
+ (error) => {
+ console.error('Error fetching data', error);
+ }
+ );
+ }
+}
+
+app.component.html 
+
+<div class="container">
+ <h1>Posts</h1>
+ <div *ngIf="posts.length === 0">
+ <p>Loading...</p>
+ </div>
+ <div *ngFor="let post of posts">
+ <h3>{{ post.title }}</h3>
+ <p>{{ post.body }}</p>
+ </div>
+</div>
+
+6. Run the Application: After completing the above steps, start the Angular
+development server:
+
+ng serve
+
+app.module.ts
+
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
+import { AppComponent } from './app.component';
+@NgModule({
+ declarations: [
+ AppComponent
+ ],
+ imports: [
+ BrowserModule,
+ HttpClientModule
+ ],
+ providers: [],
+ bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+data.service.ts
+
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+@Injectable({
+ providedIn: 'root'
+})
+export class DataService {
+ private apiUrl = 'https://jsonplaceholder.typicode.com/posts';
+ constructor(private http: HttpClient) { }
+ getPosts(): Observable<any> {
+ return this.http.get<any>(this.apiUrl);
+ }
+}
+
+app.component.ts
+
+import { Component, OnInit } from '@angular/core';
+import { DataService } from './data.service';
+@Component({
+ selector: 'app-root',
+ templateUrl: './app.component.html',
+ styleUrls: ['./app.component.css']
+})
+export class AppComponent implements OnInit {
+ posts: any[] = [];
+ constructor(private dataService: DataService) {}
+ ngOnInit(): void {
+ this.dataService.getPosts().subscribe(
+ (data) => {
+ this.posts = data;
+ },
+ (error) => {
+ console.error('Error fetching data', error);
+ }
+ );
+ }
+}
+
+app.component.html:
+
+<div class="container">
+ <h1>Posts</h1>
+ <div *ngIf="posts.length === 0">
+ <p>Loading...</p>
+ </div>
+ <div *ngFor="let post of posts">
+ <h3>{{ post.title }}</h3>
+ <p>{{ post.body }}</p>
+ </div>
+</div>
+
+Q.2) Develop an Express.js application that defines routes for Create, Update
+operations on a resource (Employee)
+
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
+const port = 3000;
+app.use(bodyParser.json());
+let employees = [
+ { id: 1, name: 'John Doe', position: 'Developer', salary: 50000 },
+ { id: 2, name: 'Jane Smith', position: 'Manager', salary: 60000 }
+];
+app.get('/employees', (req, res) => {
+ res.json(employees);
+});
+app.post('/employees', (req, res) => {
+ const newEmployee = req.body;
+ if (!newEmployee.name || !newEmployee.position || !newEmployee.salary) {
+ return res.status(400).json({ message: 'All fields are required' });
+ }
+ const newId = employees.length ? employees[employees.length - 1].id + 1 :
+1;
+ newEmployee.id = newId;
+ employees.push(newEmployee);
+ res.status(201).json({ message: 'Employee created', employee: newEmployee
+});
+});
+app.put('/employees/:id', (req, res) => {
+ const employeeId = parseInt(req.params.id);
+ const updatedEmployee = req.body;
+ const employee = employees.find(emp => emp.id === employeeId);
+ if (!employee) {
+ return res.status(404).json({ message: 'Employee not found' });
+ }
+ employee.name = updatedEmployee.name || employee.name;
+ employee.position = updatedEmployee.position || employee.position;
+ employee.salary = updatedEmployee.salary || employee.salary;
+ res.json({ message: 'Employee updated', employee });
+});
+app.listen(port, () => {
+ console.log(`Server running at http://localhost:${port}`);
+});

@@ -1,75 +1,53 @@
-Q.1. Create an ANN and train it on house price dataset classify the house price is
-above average or below average
+Q.1) Find an emp with a Salary greater than 25000 in the array. (Using find by id
+    method)
 
-import numpy as np
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.datasets import load_boston
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.utils import to_categorical
-boston = load_boston()
-X = boston.data 
-y = boston.target 
-average_price = np.mean(y)
+    const employees = [
+    { id: 1, name: 'Alice', position: 'Developer', salary: 20000 },
+    { id: 2, name: 'Bob', position: 'Designer', salary: 30000 },
+    { id: 3, name: 'Charlie', position: 'Manager', salary: 40000 },
+    ];
+    const highSalaryEmployee = employees.find(employee => employee.salary > 25000);
+    if (highSalaryEmployee) {
+    console.log('Employee with salary greater than 25000:', highSalaryEmployee);
+    } else {
+    console.log('No employee found with salary greater than 25000');
+    }
 
-y_class = np.where(y > average_price, 1, 0)
-X_train, X_test, y_train, y_test = train_test_split(X, y_class, test_size=0.2,
-random_state=42)
-scaler = StandardScaler()
-X_train = scaler.fit_transform(X_train)
-X_test = scaler.transform(X_test)
-model = Sequential()
-model.add(Dense(64, input_dim=X_train.shape[1], activation='relu'))
-model.add(Dense(32, activation='relu')) 
-model.add(Dense(1, activation='sigmoid')) 
-model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-model.fit(X_train, y_train, epochs=100, batch_size=32, validation_split=0.2)
-loss, accuracy = model.evaluate(X_test, y_test)
-print(f"Test Accuracy: {accuracy*100:.2f}%")
-predictions = model.predict(X_test)
-predictions = (predictions > 0.5).astype(int) 
-print("Predictions for the first 10 houses:")
-print(predictions[:10].flatten())
-print("Actual labels for the first 10 houses:")
-print(y_test[:10].values)
+    Q.2) Create Angular application that print the name of students who got 85% using
+    filter and map method
 
-Q.2. Write a python program to implement multiple Linear Regression for a house
-price dataset
+   
+    // ng generate component StudentList
 
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, r2_score
-actual dataset (e.g., 'house_prices.csv')
-data = {
- 'Area': [1500, 1800, 2400, 3000, 3500, 4000, 4500, 5000, 5500, 6000],
- 'Price': [245000, 312000, 369000, 450000, 512000, 570000, 600000, 650000,
-700000, 750000]
-}
-df = pd.DataFrame(data)
-X = df[['Area']] 
-y = df['Price'] 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
-random_state=42)
-model = LinearRegression()
-model.fit(X_train, y_train)
-y_pred = model.predict(X_test)
-mse = mean_squared_error(y_test, y_pred)
-r2 = r2_score(y_test, y_pred)
-print(f'Mean Squared Error: {mse}')
-print(f'R-squared: {r2}')
-plt.scatter(X_test, y_test, color='blue', label='Actual prices')
-plt.plot(X_test, y_pred, color='red', label='Regression line')
-plt.title('House Price Prediction')
-plt.xlabel('Area (Square feet)')
-plt.ylabel('Price')
-plt.legend()
-plt.show()
-new_area = np.array([[2500]])
-predicted_price = model.predict(new_area)
-print(f'Predicted price for a house with 2500 sq. feet:
-${predicted_price[0]:,.2f}')
+   
+    // student-list.component.ts
+    import { Component } from '@angular/core';
+    @Component({
+     selector: 'app-student-list',
+     templateUrl: './student-list.component.html',
+     styleUrls: ['./student-list.component.css']
+    })
+    export class StudentListComponent {
+     students = [
+     { id: 1, name: 'Alice', score: 90 },
+     { id: 2, name: 'Bob', score: 70 },
+     { id: 3, name: 'Charlie', score: 85 },
+     { id: 4, name: 'David', score: 88 }
+     ];
+     topStudents = this.students
+     .filter(student => student.score >= 85)
+     .map(student => student.name);
+    }
+   
+    <!-- student-list.component.html -->
+
+    <div>
+     <h3>Students who scored 85% or higher:</h3>
+     <ul>
+     <li *ngFor="let studentName of topStudents">{{ studentName }}</li>
+     </ul>
+    </div>
+    
+    <!-- app.component.html -->
+    
+    <app-student-list></app-student-list>

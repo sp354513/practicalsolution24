@@ -1,77 +1,134 @@
-Slip 2 :
-Q.1. Write a python program to implement simple Linear Regression for predicting
-house price. First find all null values in a given dataset and remove them
+Q.1) Write an AngularJS script to print details of bank (bank name, MICR code, IFC
+code, address etc.) in tabular form using ng-repeat.
 
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error
-data = pd.read_csv('house_prices.csv')
-print("First few rows of the dataset:")
-print(data.head())
-print("\nChecking for null values:")
-print(data.isnull().sum()) 
-data = data.dropna()
-print("\nData after removing null values:")
-print(data.isnull().sum())
-X = data[['SquareFootage']] # Input feature (independent variable)
-y = data['Price'] # Target variable (dependent variable)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
-random_state=42)
-model = LinearRegression()
-model.fit(X_train, y_train)
-y_pred = model.predict(X_test)
-mse = mean_squared_error(y_test, y_pred)
-print(f"\nMean Squared Error: {mse}")
-print(f"Slope (Coefficient): {model.coef_[0]}")
-print(f"Intercept: {model.intercept_}")
-plt.figure(figsize=(10, 6))
-plt.scatter(X, y, color='blue', label='Data Points')
-plt.plot(X, model.predict(X), color='red', linewidth=2, label='Regression Line')
-plt.xlabel('Square Footage')
-plt.ylabel('Price')
-plt.title('House Price Prediction using Linear Regression')
-plt.legend()
-plt.show()
+index.html
 
-Q.2. The data set refers to clients of a wholesale distributor. It includes the annual
-spending in monetary units on diverse product categories. Using data Wholesale
-customer dataset compute agglomerative clustering to find out annual spending clients
-in the same region?
+<!DOCTYPE html>
+<html ng-app="bankApp">
+<head>
+  <title>Bank Details</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+</head>
+<body ng-controller="BankController">
+  <h1>Bank Details</h1>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Bank Name</th>
+        <th>MICR Code</th>
+        <th>IFC Code</th>
+        <th>Address</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="bank in banks">
+        <td>{{ bank.name }}</td>
+        <td>{{ bank.micr }}</td>
+        <td>{{ bank.ifc }}</td>
+        <td>{{ bank.address }}</td>
+      </tr>
+    </tbody>
+  </table>
 
-import pandas as pd
-from sklearn.preprocessing import StandardScaler
-from sklearn.cluster import AgglomerativeClustering
-import matplotlib.pyplot as plt
-import seaborn as sns
-from scipy.cluster.hierarchy import dendrogram, linkage
-data = pd.read_csv('wholesale_customers.csv')
-print("First few rows of the dataset:")
-print(data.head())
-print("\nChecking for null values:")
-print(data.isnull().sum())
-scaler = StandardScaler()
-data_scaled = scaler.fit_transform(data.iloc[:, 2:]) 
-are columns to exclude
-linked = linkage(data_scaled, method='ward')
-plt.figure(figsize=(10, 7))
-dendrogram(linked, orientation='top', distance_sort='ascending',
-show_leaf_counts=False)
-plt.title('Dendrogram for Agglomerative Clustering')
-plt.xlabel('Clients')
-plt.ylabel('Euclidean distances')
-plt.show()
-n_clusters = 3 
-agg_clustering = AgglomerativeClustering(n_clusters=n_clusters, affinity='euclidean',
-linkage='ward')
-data['Cluster'] = agg_clustering.fit_predict(data_scaled)
-plt.figure(figsize=(10, 6))
-sns.scatterplot(data=data, x='Grocery', y='Fresh', hue='Cluster', palette='viridis')
-plt.title('Agglomerative Clustering of Wholesale Customers')
-plt.xlabel('Annual Spending on Grocery')
-plt.ylabel('Annual Spending on Fresh')
-plt.show()
-print("\nCluster means for each feature:")
-print(data.groupby('Cluster').mean())
+  <script>
+    angular.module('bankApp', [])
+      .controller('BankController', function ($scope) {
+        $scope.banks = [
+          { name: 'Bank A', micr: '123456', ifc: 'IFC123', address: 'Address 1' },
+          { name: 'Bank B', micr: '654321', ifc: 'IFC456', address: 'Address 2' },
+          { name: 'Bank C', micr: '789012', ifc: 'IFC789', address: 'Address 3' },
+        ];
+      });
+  </script>
+</body>
+</html>
+
+
+Q.2) Create a simple Angular application that fetches data from an API using HttpClient.
+Implement an Observable to fetch data from an API endpoint. 
+
+Install Angular and Set Up Project
+Ensure you have Angular CLI installed: npm install -g @angular/cli
+Create a new project: ng new angular-http-app
+Navigate to the project folder: cd angular-http-app
+Install Bootstrap for styling (optional): npm install bootstrap
+
+app.module.ts
+
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
+import { AppComponent } from './app.component';
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    BrowserModule,
+    HttpClientModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+data.service.ts
+
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+@Injectable({
+  providedIn: 'root'
+})
+export class DataService {
+  private apiUrl = 'https://jsonplaceholder.typicode.com/posts';
+  constructor(private http: HttpClient) { }
+  fetchData(): Observable<any> {
+    return this.http.get(this.apiUrl);
+  }
+}
+
+app.component.ts
+
+import { Component, OnInit } from '@angular/core';
+import { DataService } from './data.service';
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent implements OnInit {
+  data: any[] = [];
+  constructor(private dataService: DataService) {}
+  ngOnInit(): void {
+    this.dataService.fetchData().subscribe((response) => {
+      this.data = response;
+    });
+  }
+}
+
+app.component.html
+
+<div class="container mt-5">
+  <h1>Data from API</h1>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Body</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of data">
+        <td>{{ item.id }}</td>
+        <td>{{ item.title }}</td>
+        <td>{{ item.body }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+6. Run the Application
+
+ng serve

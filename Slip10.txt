@@ -1,49 +1,89 @@
-Q.1. Write a python program to transform data with Principal Component Analysis
-(PCA). Use iris dataset.
+Q.1) Implement a simple server using Node.js. [15]
 
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.decomposition import PCA
-from sklearn.preprocessing import StandardScaler
-from sklearn.datasets import load_iris
-iris = load_iris()
-X = iris.data 
-y = iris.target 
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
-pca = PCA(n_components=2)
-X_pca = pca.fit_transform(X_scaled)
-plt.figure(figsize=(8, 6))
-plt.scatter(X_pca[:, 0], X_pca[:, 1], c=y, cmap='viridis', edgecolor='k', s=50)
-plt.title('PCA of Iris Dataset')
-plt.xlabel('Principal Component 1')
-plt.ylabel('Principal Component 2')
-plt.colorbar(label='Target Class')
-plt.show()
-print(f'Explained variance ratio for each principal component:
-{pca.explained_variance_ratio_}')
+const http = require('http');
+const hostname = '127.0.0.1';
+const port = 3000;
+const server = http.createServer((req, res) => {
+res.statusCode = 200;
+res.setHeader('Content-Type', 'text/html');
+if (req.url === '/') {
+res.end('<h1>Welcome to the Home Page!</h1>');
+} else if (req.url === '/about') {
+res.end('<h1>About Us</h1><p>This is a simple Node.js server.</p>');
+} else if (req.url === '/contact') {
+res.end('<h1>Contact Us</h1><p>You can contact us at
+example@domain.com.</p>');
+} else {
+res.statusCode = 404;
+res.end('<h1>404 Not Found</h1><p>The page you requested does not
+exist.</p>');
+}
+});
+server.listen(port, hostname, () => {
+console.log(`Server running at http://${hostname}:${port}/`);
+});
 
-Q.2. Write a Python program to prepare Scatter Plot for Iris Dataset. Convert
-Categorical values in to numeric.
+Q.2) Extend the previous Express.js application to include middleware for parsing
+request bodies (e.g., JSON, form data) and validating input data. Send appropriate
+JSON responses for success and error cases
 
-import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.datasets import load_iris
-iris = load_iris()
-X = iris.data 
-y = iris.target 
-species_mapping = {0: 'setosa', 1: 'versicolor', 2: 'virginica'}
-y_numeric = [species_mapping[i] for i in y]
-iris_df = pd.DataFrame(X, columns=iris.feature_names)
-iris_df['species'] = y_numeric 
-plt.figure(figsize=(8, 6))
-for species in iris_df['species'].unique():
-subset = iris_df[iris_df['species'] == species]
-plt.scatter(subset['sepal length (cm)'], subset['sepal width (cm)'], label=species)
-plt.title('Sepal Length vs Sepal Width for Iris Dataset')
-plt.xlabel('Sepal Length (cm)')
-plt.ylabel('Sepal Width (cm)')
-plt.legend(title='Species')
-plt.grid(True)
-plt.show()
+const express = require('express');
+const bodyParser = require('body-parser');
+const { check, validationResult } = require('express-validator');
+const app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.post('/product', [
+check('name').isLength({ min: 1 }).withMessage('Name is required'),
+check('price').isFloat({ min: 0 }).withMessage('Price must be a positive number'),
+check('category').isLength({ min: 1 }).withMessage('Category is required'),
+], (req, res) => {
+const errors = validationResult(req);
+if (!errors.isEmpty()) {
+return res.status(400).json({
+success: false,
+message: 'Validation failed',
+errors: errors.array(),
+});
+}
+const { name, price, category } = req.body;
+return res.status(201).json({
+success: true,
+message: 'Product created successfully',
+data: {
+name,
+price,
+category,
+},
+});
+});
+app.get('/product/:id', (req, res) => {
+const { id } = req.params;
+if (!id) {
+return res.status(400).json({
+success: false,
+message: 'Product ID is required',
+});
+}
+const product = {
+id,
+name: 'Sample Product',
+price: 100,
+category: 'Electronics',
+};
+return res.status(200).json({
+success: true,
+message: 'Product fetched successfully',
+data: product,
+});
+});
+app.use((req, res) => {
+return res.status(404).json({
+success: false,
+message: 'Route not found',
+});
+});
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+console.log(`Server running at http://localhost:${PORT}`);
+});
